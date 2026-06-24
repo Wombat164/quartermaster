@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 300" width="1180" height="300" role="img" aria-label="Quartermaster — acquisitions, rationed">
+  <defs>
+    <radialGradient id="bg" gradientUnits="userSpaceOnUse" cx="280" cy="80" r="1150">
+      <stop offset="0" stop-color="#2B3720"/>
+      <stop offset="1" stop-color="#10160A"/>
+    </radialGradient>
+    <radialGradient id="fld" gradientUnits="userSpaceOnUse" cx="256" cy="196" r="330">
+      <stop offset="0" stop-color="#3A4A29"/>
+      <stop offset="1" stop-color="#121A0B"/>
+    </radialGradient>
+    <linearGradient id="br" gradientUnits="userSpaceOnUse" x1="256" y1="92" x2="256" y2="408">
+      <stop offset="0" stop-color="#F1CF73"/>
+      <stop offset=".55" stop-color="#CF9E37"/>
+      <stop offset="1" stop-color="#A8761C"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1180" height="300" rx="36" fill="url(#bg)"/>
+
+  <!-- key mark -->
+  <g transform="translate(34 32) scale(0.4609)">
+    <rect x="32" y="32" width="448" height="448" rx="116" fill="url(#fld)"/>
+    <rect x="46" y="46" width="420" height="420" rx="104" fill="none" stroke="#CF9E37" stroke-width="3" opacity=".34"/>
+    <circle cx="256" cy="168" r="80" fill="url(#br)"/>
+    <circle cx="256" cy="168" r="73" fill="none" stroke="#714e0d" stroke-width="9" stroke-dasharray="3 11.4" opacity=".5"/>
+    <circle cx="256" cy="168" r="61" fill="none" stroke="#714e0d" stroke-width="2.5" opacity=".4"/>
+    <path fill="url(#fld)" d="M256 126 L266.58 153.44 L295.94 155.02 L273.12 173.56 L280.69 201.98 L256 186 L231.31 201.98 L238.88 173.56 L216.06 155.02 L245.42 153.44 Z"/>
+    <rect x="227" y="242" width="58" height="24" rx="10" fill="url(#br)"/>
+    <rect x="239" y="252" width="34" height="118" rx="15" fill="url(#br)"/>
+    <path fill="url(#br)" d="M256 344 L372 344 L372 360 L340 360 L340 376 L308 376 L308 392 L276 392 L276 404 L256 404 Z"/>
+  </g>
+
+  <!-- ledger column rule -->
+  <line x1="300" y1="66" x2="300" y2="234" stroke="#CF9E37" stroke-width="2" opacity=".4"/>
+
+  <!-- wordmark (slab for a ledger/requisition feel) -->
+  <text x="338" y="156" font-family="'Zilla Slab','Roboto Slab',Rockwell,Georgia,serif" font-size="82" font-weight="600" letter-spacing="2" fill="#F2E9D2">QUARTERMASTER</text>
+  <!-- tagline -->
+  <text x="341" y="205" font-family="'Inter','Segoe UI',system-ui,sans-serif" font-size="22" font-weight="500" letter-spacing="7" fill="#D9AE55">ACQUISITIONS, RATIONED.</text>
+</svg>

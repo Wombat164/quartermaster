@@ -1,6 +1,12 @@
-# Deal-Hunter Agent
+# Quartermaster
+
+![Quartermaster](assets/quartermaster-lockup.svg)
+
+> **Codename: Quartermaster** · repo `deal-hunter-agent` · *Acquisitions, rationed.*
 
 A personal agent that **finds the best value-for-fit RAM** (and later: any fitment-gated hardware) across eBay + EU classifieds, ranks it by live landed cost, and lets you **one-click approve** a Gixen auction snipe — within a hard budget.
+
+Brand assets, palette & fonts: [`assets/BRAND.md`](assets/BRAND.md) · candidate domain **quartermaster.bid**.
 
 > **Status:** 📐 Planning complete, **no code yet.** This repo currently holds the hardened design produced through two adversarial red-team passes + OSS research. Implementation starts at **v0** (see the roadmap in the plan).
 
