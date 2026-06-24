@@ -1,0 +1,51 @@
+# --- Secrets (NEVER commit) ---
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+.secrets/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.python-version
+
+# --- uv ---
+# keep uv.lock committed; ignore the cache only
+.uv-cache/
+
+# --- Tooling caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.hypothesis/
+
+# --- App state / data (money-critical; never commit) ---
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+data/
+backups/
+*.cassette.bak
+
+# --- VCR cassettes with potential secrets: review before committing ---
+# (cassettes live under tests/cassettes/ and MUST be secret-redacted; see plan §4)
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
