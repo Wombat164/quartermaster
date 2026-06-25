@@ -3,6 +3,21 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-25 -- v0 increment 1: toolchain + skeleton
+
+- uv project (src-layout, hatchling build); dev extras: ruff, mypy (strict), pytest
+  (+asyncio, cov), respx, hypothesis, bandit, pip-audit, pre-commit. `uv.lock`
+  committed (reproducible builds, plan sec.9).
+- ruff lint selects S (security), DTZ (no-naive-datetime -> the plan's tz-aware-UTC
+  rule), ASYNC, B, I, UP, E/F, RUF. mypy strict on src + tests.
+- pre-commit: ruff + ruff-format + mypy + gitleaks (gitleaks mandatory, plan sec.4).
+- **DEVIATION:** Python PINNED to 3.13 via a COMMITTED `.python-version` (un-ignored it
+  in `.gitignore`). Reason: plan sec.6 chose 3.13, and the later scientific/ML deps
+  (numpy/scipy/llm-guard) may lack 3.14 wheels; `>=3.13` alone let uv pick 3.14.
+  `requires-python` stays `>=3.13`.
+- No runtime deps yet (v0 foundation); deps are added per functional block as v1 lands.
+- Validated: ruff clean, mypy strict clean, pytest green on 3.13.14.
+
 ## 2026-06-25 -- Architecture + UX artifacts distilled from plan-final
 
 - `docs/architecture.md` + `docs/ux-mock.md` make `plan-final.md` concrete (they double
