@@ -6,8 +6,12 @@ readme = "README.md"
 requires-python = ">=3.13"
 license = { text = "Proprietary -- personal use only" }
 # Runtime deps are added per functional block as v1 lands (plan sec.6). v0 is
-# foundation only: no bidding / LLM / eBay / SPD-DB. Keep this minimal on purpose.
-dependencies = []
+# foundation only: no bidding / LLM / eBay / SPD-DB. The schema core (increment 2)
+# needs only the persistence layer.
+dependencies = [
+  "sqlalchemy>=2.0",
+  "alembic>=1.13",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -34,6 +38,7 @@ packages = ["src/quartermaster"]
 line-length = 100
 target-version = "py313"
 src = ["src", "tests"]
+extend-exclude = ["alembic"]  # framework-generated env + migrations
 
 [tool.ruff.lint]
 # E/F pyflakes+pycodestyle, I isort, UP pyupgrade, B bugbear, S bandit-security,

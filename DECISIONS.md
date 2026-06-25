@@ -3,6 +3,31 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-25 -- v0 increment 2: schema core (ledger + FSM + source-tag)
+
+Tier-A money/safety -> full rigor (plan sec.9).
+- Models (money as integer CENTS, never float): `Budget` (singleton; CHECK
+  0 <= committed <= cap) + `Snipe` (source immutable via `@validates`; idempotency
+  `UNIQUE(account, ebay_item_id, snapshot_hash)`; UTC-aware timestamps via a
+  `UTCDateTime` TypeDecorator since SQLite has no native tz).
+- Reserved-budget ledger (sec.3 CRIT fix): atomic `reserve` (guarded UPDATE, refuses to
+  exceed cap), guarded `release` (refuses underflow), `reconcile` (recomputes
+  committed = sum(reserved over HOLDING snipes) -- the leak detector).
+- FSM (sec.5): hand-rolled enum + transition table. **DEVIATION** from `python-statemachine`
+  (sec.6): chosen for transparency + property-testability of the money invariant; can be
+  wrapped later without changing the table. The HOLDING set drives release -- a reservation
+  frees exactly when a snipe LEAVES holding; `NEEDS_HUMAN_RECONCILE` stays holding
+  (fail-closed on money).
+- `snipes` service: `create` (reserve + insert) and `transition` (validate edge + release)
+  run in the caller's session transaction (release in the SAME tx as the state change).
+- SQLite WAL + busy_timeout + foreign_keys via a connect listener.
+- Alembic initial migration (reversible); custom-type import wired into the env mako
+  template so future autogen does not break.
+- Tests (17 pass): a hypothesis STATEFUL property test (committed == sum(holding reserved)
+  and 0 <= committed <= cap across random create/transition sequences) + reserve/release/
+  reconcile units + FSM + source-immutability + idempotency + migration
+  upgrade -> downgrade -> upgrade. Still NO bidding/LLM/eBay/SPD-DB.
+
 ## 2026-06-25 -- v0 increment 1: toolchain + skeleton
 
 - uv project (src-layout, hatchling build); dev extras: ruff, mypy (strict), pytest
