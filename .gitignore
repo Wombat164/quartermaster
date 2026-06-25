@@ -16,7 +16,7 @@ build/
 dist/
 .venv/
 venv/
-.python-version
+# .python-version is COMMITTED on purpose: it is the uv project Python pin (3.13).
 
 # --- uv ---
 # keep uv.lock committed; ignore the cache only
