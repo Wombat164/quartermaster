@@ -3,6 +3,20 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-26 -- v0 increment 3: CI + network-egress blocker (the safety net)
+
+- GitHub Actions `.github/workflows/ci.yml`: `uv sync --locked` (lock-drift gate) ->
+  ruff check -> ruff format --check -> mypy --strict -> pytest -> bandit (src) ->
+  pip-audit, plus a separate gitleaks job. Runs on main + dev + PRs.
+- **AUTOUSE network-egress blocker** (`conftest.block_network`): patches
+  `socket.connect` / `socket.create_connection` to raise `NetworkBlocked` on any
+  non-loopback host, so NO test can ever reach eBay / Gixen / SerpApi / a classifieds
+  inbox or place a real bid. Loopback passes through (SQLite uses no socket, so the DB
+  tests are unaffected). Verified by `test_egress` (external blocked; loopback reaches
+  the OS error, not NetworkBlocked).
+- Ran `ruff format` across the tree (consistent style; the CI format gate is green).
+- 19 tests pass; ruff + mypy --strict + bandit clean; pip-audit reports no CVEs.
+
 ## 2026-06-25 -- v0 increment 2: schema core (ledger + FSM + source-tag)
 
 Tier-A money/safety -> full rigor (plan sec.9).

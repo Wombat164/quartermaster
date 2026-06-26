@@ -43,8 +43,12 @@ class LedgerStateMachine(RuleBasedStateMachine):
         before = self._model_committed()
         try:
             sn = snipes.create_snipe(
-                self.session, account="a", ebay_item_id=f"i{self.n}", snapshot_hash="h",
-                source=Source.EBAY_API, reserved_cents=amount,
+                self.session,
+                account="a",
+                ebay_item_id=f"i{self.n}",
+                snapshot_hash="h",
+                source=Source.EBAY_API,
+                reserved_cents=amount,
             )
         except BudgetExceeded:
             assert before + amount > CAP
@@ -81,8 +85,12 @@ TestLedgerProperty = LedgerStateMachine.TestCase
 
 def _seed(session: Session, cents: int = 7100) -> Snipe:
     return snipes.create_snipe(
-        session, account="a", ebay_item_id="i", snapshot_hash="h",
-        source=Source.EBAY_API, reserved_cents=cents,
+        session,
+        account="a",
+        ebay_item_id="i",
+        snapshot_hash="h",
+        source=Source.EBAY_API,
+        reserved_cents=cents,
     )
 
 

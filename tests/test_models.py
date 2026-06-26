@@ -16,16 +16,20 @@ from quartermaster.models import Snipe, Source
 
 def test_source_is_immutable() -> None:
     s = Snipe(
-        account="a", ebay_item_id="i", snapshot_hash="h",
-        source=Source.EBAY_API, reserved_cents=1,
+        account="a",
+        ebay_item_id="i",
+        snapshot_hash="h",
+        source=Source.EBAY_API,
+        reserved_cents=1,
     )
     with pytest.raises(ValueError, match="immutable"):
         s.source = Source.CLASSIFIEDS_EMAIL
 
 
 def test_idempotency_unique(session: Session) -> None:
-    kw = dict(account="a", ebay_item_id="i", snapshot_hash="h",
-              source=Source.EBAY_API, reserved_cents=100)
+    kw = dict(
+        account="a", ebay_item_id="i", snapshot_hash="h", source=Source.EBAY_API, reserved_cents=100
+    )
     snipes.create_snipe(session, **kw)  # type: ignore[arg-type]
     with pytest.raises(IntegrityError):
         snipes.create_snipe(session, **kw)  # type: ignore[arg-type]
