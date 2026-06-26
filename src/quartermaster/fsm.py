@@ -35,8 +35,14 @@ class State(StrEnum):
 # releases the reservation. NEEDS_HUMAN_RECONCILE stays holding -- fail-closed on money
 # (a won-but-unrecorded snipe must NOT release budget; plan sec.3).
 HOLDING: frozenset[State] = frozenset(
-    {State.PENDING, State.REGISTERED, State.VERIFIED, State.FIRED, State.WON,
-     State.NEEDS_HUMAN_RECONCILE}
+    {
+        State.PENDING,
+        State.REGISTERED,
+        State.VERIFIED,
+        State.FIRED,
+        State.WON,
+        State.NEEDS_HUMAN_RECONCILE,
+    }
 )
 
 # Terminal states (no outgoing edges).
@@ -56,9 +62,7 @@ ALLOWED: dict[State, frozenset[State]] = {
     State.SHIPPED: frozenset({State.RECEIVED}),
     State.RECEIVED: frozenset({State.TESTED}),
     State.TESTED: frozenset({State.KEPT, State.RETURNED}),
-    State.NEEDS_HUMAN_RECONCILE: frozenset(
-        {State.PAID, State.LOST, State.CANCELLED, State.ERROR}
-    ),
+    State.NEEDS_HUMAN_RECONCILE: frozenset({State.PAID, State.LOST, State.CANCELLED, State.ERROR}),
     State.KEPT: frozenset(),
     State.RETURNED: frozenset(),
     State.LOST: frozenset(),
