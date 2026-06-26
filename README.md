@@ -4,19 +4,19 @@
 
 > **Codename: Quartermaster** · repo `deal-hunter-agent` · *Acquisitions, rationed.*
 
-A personal agent that **finds the best value-for-fit RAM** (and later: any fitment-gated hardware) across eBay + EU classifieds, ranks it by live landed cost, and lets you **one-click approve** a Gixen auction snipe — within a hard budget.
+A personal agent that **finds the best value-for-fit RAM** (and later: any fitment-gated hardware) across EU classifieds + multi-retailer price data, and ranks it by **live landed cost vs the market** -- so you see the best deal available now. Buying stays in your hands: a one-click-approved Gixen auction snipe within a hard budget is a **later phase (Phase 2)**.
 
 Brand assets, palette & fonts: [`assets/BRAND.md`](assets/BRAND.md) · candidate domain **quartermaster.bid**.
 
-> **Status:** 📐 Planning complete, **no code yet.** This repo currently holds the hardened design produced through two adversarial red-team passes + OSS research. Implementation starts at **v0** (see the roadmap in the plan).
+> **Status (2026-06-26):** v0 foundation built -- toolchain + schema/ledger + CI + network-egress blocker, CI green. **Pivoted to SEARCH + COMPARE first; bid/buy deferred to Phase 2** (Gate 0 resolved: eBay API dropped -- see below + `DECISIONS.md`).
 
 ---
 
-## 🚦 READ THIS FIRST — Gate 0 (go/no-go before any code)
+## Gate 0 RESOLVED (2026-06-26) -- pivot to search + compare
 
-The entire eBay leg depends on getting **eBay production Browse API access**, which is a *gated* "restricted" API and may be **denied** for a personal sniping app. **Open an eBay Developer Support ticket** (personal use, human-approved, no AI on eBay content, <6h purge) and get a written yes/no **before building the eBay leg.**
-- **Yes →** build v0 → v1 → v2.
-- **No →** fall back to classifieds-only (thin) or manual Gixen + native saved-search alerts.
+Deep-research (`docs/background/ebay-gate0-research.md`) found production eBay Buy/Browse API access is partner-only, business-model-gated, "no guarantee", with no personal-app precedent -- too uncertain to build on. So the **eBay API is dropped**:
+- **Phase 1 (now): SEARCH + COMPARE** on compliant sources -- classifieds saved-search alert EMAILS (discovery) + SerpApi Google Shopping as the compare baseline (retail / Amazon / eBay-as-price-comps, no scraping) + a bootstrap EUR/GB table. No approve button.
+- **Phase 2 (deferred): BID/BUY** -- manual eBay + a Gixen snipe with one-click approval. The money/safety machinery (ledger/FSM/source-tag) is already built + tested in v0 increment 2.
 
 ## The non-negotiables (compliance & safety — hard-coded)
 1. **Human one-click approval before every binding bid** (eBay's Feb-2026 UA bans autonomous order flows). Gixen still fires the pre-approved max unattended at close.

@@ -1,6 +1,25 @@
 # Deal-Hunter Agent — FINAL Plan (v3, post two red-teams + OSS research + lean pass)
 **Date:** 2026-06-24 · Supersedes v1/v2. Authoritative.
 
+> ## PIVOT 2026-06-26 -- supersedes the roadmap + RESOLVES Gate 0
+> Gate 0 is **resolved NO-GO on the eBay API** (deep-research:
+> `docs/background/ebay-gate0-research.md`; decision in `DECISIONS.md`). Production eBay
+> Buy/Browse access is partner-only, business-model-gated, "no guarantee", with no
+> personal-app precedent -- too uncertain to build on. Therefore:
+> - **eBay API is DROPPED** (eBay = manual browse + manual Gixen later).
+> - The product pivots to **SEARCH + COMPARE first** -- the "funnel before the click" IS
+>   the product now. Data sources: classifieds saved-search alert EMAILS (discovery) +
+>   **SerpApi** Google Shopping as the compare baseline (retail / Amazon / eBay-as-comps,
+>   no scraping) + a bootstrap EUR/GB table.
+> - **Bid/buy (Gixen snipe + approval + ledger/FSM) is DEFERRED to Phase 2** -- already
+>   built + tested in v0 increment 2, sitting ready.
+> - Roadmap now: **Phase 1 = search+compare** (alert/compare-only, NO approve button);
+>   **Phase 2 = bid/buy**.
+>
+> Everything below remains the authoritative DESIGN (the engine, the non-negotiables, the
+> money/safety core); only the ordering + the eBay-API assumption changed. The Gate 0
+> callout and the Section 8 roadmap below are SUPERSEDED by this banner.
+
 ---
 
 ## 0. TL;DR + the ONE go/no-go gate

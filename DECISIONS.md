@@ -3,6 +3,31 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-26 -- STRATEGIC PIVOT: search+compare first; bid/buy deferred; eBay API dropped
+
+**Gate 0 RESOLVED -> NO-GO on the eBay API.** The deep-research
+(`docs/background/ebay-gate0-research.md`) found production eBay Buy/Browse API access is
+partner-only, business-model-gated, "no guarantee", with no surfaced precedent of a
+granted personal/hobbyist app -- too uncertain to build on. Our design is compliant; the
+risk is commercial rejection, not legality. Decision:
+
+- **DROP the eBay API dependency.** eBay becomes manual-only (browse + manual Gixen
+  later). No EPN application blocks development.
+- **PIVOT the product to SEARCH + COMPARE first:** discover available value-for-fit RAM
+  and rank by landed cost vs a live market baseline -- the "funnel before the click" that
+  was always the stated core value.
+- **DEFER bid/buy** (Gixen snipe + approval + the ledger/FSM built in increment 2) to
+  **Phase 2.** Increment 2 is NOT wasted -- it is the tested Phase-2 foundation, sitting
+  ready.
+- **Data sources (compliant, no eBay API, no scraping):** discovery = classifieds
+  saved-search ALERT EMAILS (body = dataset); compare baseline = **SerpApi** Google
+  Shopping (retail + Amazon + eBay listings AS PRICE COMPS, incl EU) + a bootstrap EUR/GB
+  table. NOTE: dropping the API does NOT lose the eBay *price* signal (SerpApi surfaces
+  eBay via Google Shopping); we lose only API-driven eBay *sniping* (deferred anyway).
+- **Roadmap reshaped:** Phase 1 = search+compare (alert/compare-only, NO approve button);
+  Phase 2 = bid/buy. plan-final.md carries a pivot banner; the detailed design there
+  remains valid for Phase 2 + the engine.
+
 ## 2026-06-26 -- v0 increment 3: CI + network-egress blocker (the safety net)
 
 - GitHub Actions `.github/workflows/ci.yml`: `uv sync --locked` (lock-drift gate) ->
