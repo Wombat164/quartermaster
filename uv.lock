@@ -296,6 +296,15 @@ wheels = [
 ]
 
 [[package]]
+name = "currencyconverter"
+version = "0.18.19"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4a/6f/2ff9d87b2010d36e4b9bdea1074b19b2b477ce2d63214a82b61c65044115/currencyconverter-0.18.19.tar.gz", hash = "sha256:a2df412423e64d8cdc0829f6efaaf4fcf52587969a7f3134ba5b88323e908a7d", size = 3842059, upload-time = "2026-06-17T10:17:01.836Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/79/81/320f96b79240aed143fb0bf964e82b53f8625885228ac553ddc5073e9379/currencyconverter-0.18.19-py3-none-any.whl", hash = "sha256:efce931fc662606e6575e874b7ed1156131c967754789d03ddd791ceae9f57c4", size = 647874, upload-time = "2026-06-17T10:17:00.273Z" },
+]
+
+[[package]]
 name = "cyclonedx-python-lib"
 version = "11.11.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1194,6 +1203,7 @@ version = "0.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "alembic" },
+    { name = "currencyconverter" },
     { name = "pydantic-settings" },
     { name = "sqlalchemy" },
 ]
@@ -1219,6 +1229,7 @@ docs = [
 requires-dist = [
     { name = "alembic", specifier = ">=1.13" },
     { name = "bandit", marker = "extra == 'dev'", specifier = ">=1.7" },
+    { name = "currencyconverter", specifier = ">=0.18.19" },
     { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6" },
     { name = "mkdocs-material", marker = "extra == 'docs'", specifier = ">=9.7.6" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.13" },
