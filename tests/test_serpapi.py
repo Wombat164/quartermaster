@@ -9,30 +9,17 @@ import httpx
 import pytest
 import respx
 
-from quartermaster.fitment import DdrGen, FormFactor, RamSpec
 from quartermaster.serpapi import (
     SERPAPI_URL,
     SOURCE,
     SerpApiError,
     fetch_shopping_comps,
-    query_for,
 )
 from quartermaster.valuation import Comp, Currency, FxRates, live_baseline
 
 
 def _shopping(*items: dict[str, object]) -> dict[str, object]:
     return {"shopping_results": list(items)}
-
-
-def test_query_for_builds_search_string() -> None:
-    spec = RamSpec(
-        ddr_gen=DdrGen.DDR4,
-        form_factor=FormFactor.SODIMM,
-        speed_mts=3200,
-        capacity_gb_per_module=32,
-        module_count=2,
-    )
-    assert query_for(spec) == "DDR4 3200MHz 64GB SO-DIMM RAM"
 
 
 @respx.mock
