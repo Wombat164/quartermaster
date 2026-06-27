@@ -14,12 +14,15 @@ from hypothesis import strategies as st
 from quartermaster.fitment import DdrGen, FormFactor, RamSpec
 from quartermaster.valuation import (
     BOOTSTRAP_EUR_PER_GB,
+    MIN_LIVE_COMPS,
     BaselineTag,
+    Comp,
     Currency,
     FxRates,
     LandedCost,
     bootstrap_baseline,
     deal_pct,
+    live_baseline,
 )
 
 # Sample snapshot: 1 USD = 0.92 EUR, 1 GBP = 1.17 EUR.
@@ -120,6 +123,67 @@ def test_bootstrap_unknown_returns_none() -> None:
 def test_bootstrap_table_covers_all_ddr_gens() -> None:
     # Adding a DdrGen without a table row would silently give that generation no valuation.
     assert set(BOOTSTRAP_EUR_PER_GB) == set(DdrGen)
+
+
+# --- live baseline (trimmed median over deterministic comps) ---
+
+
+def _eur_comps(prices: list[str]) -> list[Comp]:
+    return [Comp(Decimal(p), Currency.EUR, "test") for p in prices]
+
+
+def test_live_baseline_too_few_comps_is_none() -> None:
+    assert live_baseline(_eur_comps(["100", "110", "120", "130"]), FX) is None  # 4 < MIN_LIVE_COMPS
+
+
+def test_live_baseline_trimmed_median() -> None:
+    b = live_baseline(_eur_comps(["100", "110", "120", "130", "140"]), FX)
+    assert b is not None
+    assert b.tag is BaselineTag.LIVE
+    assert b.n_comps == 5
+    assert b.market_ref_cents == 12000  # median of 5 EUR comps
+
+
+def test_live_baseline_ignores_outlier() -> None:
+    comps = _eur_comps(["120"] * 10 + ["99999"])  # 11 comps; one wild outlier
+    b = live_baseline(comps, FX)
+    assert b is not None
+    assert b.market_ref_cents == 12000  # trimmed median drops the outlier
+
+
+def test_live_baseline_converts_currencies() -> None:
+    comps = [
+        Comp(Decimal("120"), Currency.EUR, "x"),
+        Comp(Decimal("130"), Currency.USD, "x"),  # *0.92 = 119.60
+        Comp(Decimal("100"), Currency.GBP, "x"),  # *1.17 = 117.00
+        Comp(Decimal("120"), Currency.EUR, "x"),
+        Comp(Decimal("120"), Currency.EUR, "x"),
+    ]
+    b = live_baseline(comps, FX)
+    assert b is not None
+    assert b.tag is BaselineTag.LIVE
+    assert 11000 <= b.market_ref_cents <= 13000  # all comps near EUR 120
+
+
+@given(
+    st.lists(
+        st.decimals(
+            min_value=Decimal(1),
+            max_value=Decimal(10000),
+            allow_nan=False,
+            allow_infinity=False,
+            places=2,
+        ),
+        min_size=MIN_LIVE_COMPS,
+        max_size=40,
+    )
+)
+def test_live_baseline_in_comp_range(prices: list[Decimal]) -> None:
+    b = live_baseline([Comp(p, Currency.EUR, "x") for p in prices], FX)
+    assert b is not None
+    assert b.n_comps == len(prices)
+    cents = sorted(int(p * 100) for p in prices)  # places=2 -> p*100 is integral
+    assert cents[0] <= b.market_ref_cents <= cents[-1]
 
 
 def test_deal_pct_below_market() -> None:
