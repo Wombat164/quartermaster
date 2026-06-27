@@ -90,6 +90,11 @@ def test_parse_price_none_when_absent() -> None:
     assert parse_price("RAM for sale, make an offer") is None
 
 
+def test_parse_price_ignores_digit_glued_to_letters() -> None:
+    # "DDR4 EUR 80" must price the 80, not the 4 in DDR4.
+    assert parse_price("16GB DDR4 EUR 80") == (Decimal("80"), Currency.EUR)
+
+
 @given(st.text())
 def test_parse_price_total_and_positive(text: str) -> None:
     result = parse_price(text)  # totality: never raises
