@@ -3,6 +3,27 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- P1.2b (ii): SerpApi Google-Shopping client (closes P1.2)
+
+The data source that produces the `Comp` list for `live_baseline`. `serpapi.py`:
+
+- `fetch_shopping_comps(query, *, api_key, gl, hl, ...)` -> GET SerpApi google_shopping -> parse
+  `shopping_results` -> `Comp(price, currency, source="serpapi_google_shopping")`. Price from
+  `extracted_price` (Decimal via str, no float math); currency from the formatted-price symbol
+  (EUR/GBP/USD) with the request locale as fallback. Skips price-less / non-positive items; raises
+  `SerpApiError` on a SerpApi error payload, `httpx.HTTPStatusError` on a bad status. `query_for(spec)`
+  builds the search string from a RamSpec.
+- **Deterministic-only (boundary B2):** only numeric price + currency + source are kept; no listing
+  text, never sent to an LLM.
+- **Secret handling:** the key is a query param (SerpApi's design) so the URL holds it -- never
+  logged; passed in by the caller (unwrapped from `config.serpapi_api_key`), never read from disk.
+- Adds `httpx`. respx-mocked tests (7); the egress backstop guarantees no live call in CI; a live
+  smoke run stays manual/local with the real Bitwarden key.
+- Follow-ups (noted): tenacity retry + pyrate-limiter rate-limit (plan sec.6); query tuning; seller/
+  condition filters. structlog + redaction (red-team GAP-2) still precedes any logger here.
+
+**P1.2 is now end-to-end:** SerpApi comps -> trimmed-median market_ref -> deal% -> evaluate() surface.
+
 ## 2026-06-27 -- P1.2b (i): live trimmed-median baseline (pure money core)
 
 The compare half of P1.2, money core first. `valuation.py` gains `Comp` (a deterministic price

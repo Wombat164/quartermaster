@@ -13,6 +13,7 @@ dependencies = [
   "alembic>=1.13",
   "pydantic-settings>=2.14.2",
   "currencyconverter>=0.18.19",
+  "httpx>=0.28.1",
 ]
 
 [project.optional-dependencies]
