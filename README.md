@@ -6,9 +6,9 @@
 
 A personal agent that **finds the best value-for-fit RAM** (and later: any fitment-gated hardware) across EU classifieds + multi-retailer price data, and ranks it by **live landed cost vs the market** -- so you see the best deal available now. Buying stays in your hands: a one-click-approved Gixen auction snipe within a hard budget is a **later phase (Phase 2)**.
 
-Brand assets, palette & fonts: [`assets/BRAND.md`](assets/BRAND.md) · candidate domain **quartermaster.bid**.
+**Docs site:** <https://wombat164.github.io/deal-hunter-agent/> · Brand assets, palette & fonts: [`assets/BRAND.md`](assets/BRAND.md) · candidate domain **quartermaster.bid**.
 
-> **Status (2026-06-26):** v0 foundation built -- toolchain + schema/ledger + CI + network-egress blocker, CI green. **Pivoted to SEARCH + COMPARE first; bid/buy deferred to Phase 2** (Gate 0 resolved: eBay API dropped -- see below + `DECISIONS.md`).
+> **Status (2026-06-27):** **Public + MIT.** v0 foundation + **P1.1 fitment core** shipped (toolchain, money/safety schema core, CI + egress blocker, the deterministic compatibility gate). **Phase 1 = SEARCH + COMPARE first**; bid/buy is Phase 2 (Gate 0: eBay API dropped). See [`DECISIONS.md`](DECISIONS.md).
 
 ---
 

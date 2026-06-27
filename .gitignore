@@ -22,6 +22,10 @@ venv/
 # keep uv.lock committed; ignore the cache only
 .uv-cache/
 
+# --- docs (mkdocs build output + material cache) ---
+site/
+.cache/
+
 # --- Tooling caches ---
 .pytest_cache/
 .mypy_cache/
