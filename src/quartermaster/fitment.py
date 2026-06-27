@@ -186,6 +186,10 @@ def _per_module_capacity(spec: RamSpec, profile: FitmentProfile) -> GateResult:
     cap = spec.capacity_gb_per_module
     if cap is None:
         return GateResult("per_module_capacity", GateStatus.UNKNOWN, "module capacity not stated")
+    if cap <= 0:
+        return GateResult(
+            "per_module_capacity", GateStatus.REJECT, f"implausible module capacity: {cap} GB"
+        )
     if cap > profile.max_per_module_gb:
         return GateResult(
             "per_module_capacity",
@@ -199,6 +203,10 @@ def _kit_fit(spec: RamSpec, profile: FitmentProfile) -> GateResult:
     count, total = spec.module_count, spec.total_gb
     if count is None or total is None:
         return GateResult("kit_fit", GateStatus.UNKNOWN, "kit configuration not stated")
+    if count <= 0 or total <= 0:
+        return GateResult(
+            "kit_fit", GateStatus.REJECT, f"implausible kit: {count} module(s), {total} GB"
+        )
     if count > profile.slots:
         return GateResult(
             "kit_fit", GateStatus.REJECT, f"{count}-module kit; only {profile.slots} slots"

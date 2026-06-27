@@ -56,7 +56,9 @@ ALLOWED: dict[State, frozenset[State]] = {
     State.PENDING: frozenset({State.REGISTERED, State.CANCELLED, State.ERROR, State.EXPIRED}),
     State.REGISTERED: frozenset({State.VERIFIED, State.CANCELLED, State.ERROR, State.EXPIRED}),
     State.VERIFIED: frozenset({State.FIRED, State.CANCELLED, State.ERROR, State.EXPIRED}),
-    State.FIRED: frozenset({State.WON, State.LOST, State.ERROR, State.NEEDS_HUMAN_RECONCILE}),
+    # FIRED has NO -> ERROR edge: a fired-but-unconfirmed snipe goes to NEEDS_HUMAN_RECONCILE
+    # (still holding), never silently releasing budget. Only a confirmed LOST frees it.
+    State.FIRED: frozenset({State.WON, State.LOST, State.NEEDS_HUMAN_RECONCILE}),
     State.WON: frozenset({State.PAID, State.NEEDS_HUMAN_RECONCILE}),
     State.PAID: frozenset({State.SHIPPED}),
     State.SHIPPED: frozenset({State.RECEIVED}),

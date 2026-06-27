@@ -3,6 +3,47 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- Red-team pass: foundation hardening (pre-P1.2b)
+
+Three independent adversarial reviews (money-correctness, security/safety, gap-analysis) before
+building further. The foundation was found sound (integer-cents math, ledger atomicity, release-
+exactly-once, no float leakage, no secrets/PII, no network/autonomous-action path yet). Fixes this
+increment:
+
+- **fitment (HIGH bug):** a malformed spec (`capacity_gb_per_module <= 0` / `module_count <= 0` /
+  negative) previously returned PASS -- surfacing garbage as biddable and feeding a negative
+  `market_ref`. Both CRITICAL gates now REJECT non-positive values; property tests cover it.
+- **FX hardening:** `FxRates` enforces a per-currency plausibility band (0.1..10 EUR/unit) so a
+  mis-scaled/inverted rate (e.g. USD=100) fails closed instead of silently 100x-ing landed cost;
+  `FxSnapshot.age_days` clamps at 0 (clock skew can't read as "fresh").
+- **LandedCost validation:** rejects negative price/shipping and `import_vat_rate` outside [0,1)
+  (catches the 21-vs-0.21 fat-finger).
+- **FSM fail-closed (money):** removed the `FIRED -> ERROR` edge -- a fired-but-unconfirmed snipe
+  routes only to NEEDS_HUMAN_RECONCILE (still holding); the sole budget-releasing edge out of FIRED
+  is a confirmed LOST. Property test asserts it.
+- **Egress backstop hardened:** also guards `connect_ex` + `getaddrinfo` (DNS); wording softened
+  (respx is the primary control, this is the backstop). New test covers connect_ex + DNS.
+- **bootstrap table:** test asserts it covers every `DdrGen`; `.github/dependabot.yml` added
+  (github-actions + uv, weekly).
+
+69 tests pass; ruff/mypy-strict/bandit clean.
+
+**DEFERRED -- reviewers converged that a small composition+plumbing increment should precede P1.2b**
+(each is cheap now, expensive after network/LLM code):
+1. `evaluate()` + `EvaluatedListing` -- the missing seam composing source + RamSpec + verdict +
+   landed cost + deal% + provenance; hosts the staleness->ALERT and incomplete-cost->ALERT rules.
+2. structlog + secret redaction -- must precede the first secret-bearing client (SerpApi).
+3. Phase-1 `Listing` model + source taxonomy (`SERPAPI_SHOPPING`) + `llm_allowed` routing + the B1
+   source-leak guard test -- so comp data is deterministic-only from the first byte.
+THEN P1.2b (live SerpApi trimmed-median baseline) -> P1.3 ingest -> P1.4 digest + golden set.
+
+Smaller deferred (documented, not yet fixed): landed-cost completeness flag (customs/GSP/payment-FX/
+E[DOA] are an additive under-estimate -> inflates deal% cross-border; force ALERT until modelled);
+`create_snipe` reserve-before-idempotency-insert (add SAVEPOINT + regression test); `Snipe.budget_id`
+scoping for `reconcile`; VCR cassette redaction (before vcrpy lands); pin Actions to commit SHAs;
+mid-lifecycle FSM timeout edges; 1.35V SO-DIMM -> RISK; PROMPT-FOR-RCDE.md "rcde" codename (scrub vs
+remove -- operator call).
+
 ## 2026-06-27 -- P1.2a: valuation money core (EUR/USD/GBP first-class)
 
 The Phase-1 "value" block, pure + network-free (`src/quartermaster/valuation.py`). Money in

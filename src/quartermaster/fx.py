@@ -26,7 +26,8 @@ class FxSnapshot:
     as_of: dt.date
 
     def age_days(self, today: dt.date) -> int:
-        return (today - self.as_of).days
+        # Clamp at 0: a future as_of (clock skew) must never read as a "fresh" negative age.
+        return max(0, (today - self.as_of).days)
 
 
 def ecb_fx_rates(converter: CurrencyConverter | None = None) -> FxSnapshot:

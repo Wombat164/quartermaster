@@ -29,3 +29,15 @@ def test_loopback_passes_the_guard() -> None:
         assert not isinstance(exc.value, NetworkBlocked)
     finally:
         s.close()
+
+
+def test_connect_ex_and_dns_are_blocked() -> None:
+    # connect_ex and DNS are separate egress paths -- the backstop must cover them too.
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        with pytest.raises(NetworkBlocked):
+            s.connect_ex(("example.com", 80))
+    finally:
+        s.close()
+    with pytest.raises(NetworkBlocked):
+        socket.getaddrinfo("example.com", 80)

@@ -1,0 +1,12 @@
+# Keep third-party GitHub Actions and Python deps current + flag advisories.
+# (Mitigates floating-tag action pinning; a follow-up may pin actions to commit SHAs.)
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
