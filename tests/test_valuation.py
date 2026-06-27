@@ -11,16 +11,13 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from quartermaster.fitment import DdrGen, FormFactor, RamSpec
 from quartermaster.valuation import (
-    BOOTSTRAP_EUR_PER_GB,
     MIN_LIVE_COMPS,
     BaselineTag,
     Comp,
     Currency,
     FxRates,
     LandedCost,
-    bootstrap_baseline,
     deal_pct,
     live_baseline,
 )
@@ -97,32 +94,6 @@ def test_fx_rejects_implausible_rate() -> None:
         FxRates(
             {Currency.EUR: Decimal(1), Currency.USD: Decimal(100), Currency.GBP: Decimal("1.17")}
         )
-
-
-# --- baseline + deal scoring ---
-
-
-def test_bootstrap_ddr4_64gb() -> None:
-    spec = RamSpec(
-        ddr_gen=DdrGen.DDR4,
-        form_factor=FormFactor.SODIMM,
-        capacity_gb_per_module=32,
-        module_count=2,
-    )
-    b = bootstrap_baseline(spec)
-    assert b is not None
-    assert b.market_ref_cents == 14080  # 2.20 EUR/GB * 64 GB
-    assert b.tag is BaselineTag.BOOTSTRAP
-
-
-def test_bootstrap_unknown_returns_none() -> None:
-    assert bootstrap_baseline(RamSpec(ddr_gen=DdrGen.DDR4)) is None  # no size
-    assert bootstrap_baseline(RamSpec(capacity_gb_per_module=16, module_count=2)) is None  # no gen
-
-
-def test_bootstrap_table_covers_all_ddr_gens() -> None:
-    # Adding a DdrGen without a table row would silently give that generation no valuation.
-    assert set(BOOTSTRAP_EUR_PER_GB) == set(DdrGen)
 
 
 # --- live baseline (trimmed median over deterministic comps) ---

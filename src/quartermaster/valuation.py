@@ -19,12 +19,11 @@ from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 from enum import StrEnum
 
-from .fitment import DdrGen, RamSpec
-
 _CENTS = Decimal(1)
 
 
-def _to_cents(eur: Decimal) -> int:
+def to_cents(eur: Decimal) -> int:
+    """Round a EUR amount to integer cents (ROUND_HALF_UP) -- the money unit boundary."""
     return int((eur * 100).quantize(_CENTS, rounding=ROUND_HALF_UP))
 
 
@@ -106,26 +105,7 @@ class LandedCost:
     def eur_cents(self, fx: FxRates) -> int:
         subtotal = fx.to_eur(self.price + self.shipping, self.currency)
         total = subtotal * (Decimal(1) + self.import_vat_rate)
-        return _to_cents(total)
-
-
-# Cold-start bootstrap EUR/GB by DDR generation (manual; refresh as live comps accrue).
-# Deliberately conservative -- only used until enough LIVE comps exist (plan sec.3 cold-start).
-BOOTSTRAP_EUR_PER_GB: dict[DdrGen, Decimal] = {
-    DdrGen.DDR3: Decimal("1.20"),
-    DdrGen.DDR4: Decimal("2.20"),
-    DdrGen.DDR5: Decimal("3.50"),
-}
-
-
-def bootstrap_baseline(spec: RamSpec) -> Baseline | None:
-    """Cold-start market reference from the EUR/GB table. None if generation or size unknown."""
-    if spec.ddr_gen is None or spec.total_gb is None:
-        return None
-    per_gb = BOOTSTRAP_EUR_PER_GB.get(spec.ddr_gen)
-    if per_gb is None:
-        return None
-    return Baseline(_to_cents(per_gb * spec.total_gb), BaselineTag.BOOTSTRAP)
+        return to_cents(total)
 
 
 # A live baseline needs enough comps to trust; below this it stays bootstrap/ALERT (plan sec.3).
@@ -152,7 +132,7 @@ def live_baseline(comps: Sequence[Comp], fx: FxRates) -> Baseline | None:
     """
     if len(comps) < MIN_LIVE_COMPS:
         return None
-    cents = [_to_cents(fx.to_eur(c.price, c.currency)) for c in comps]
+    cents = [to_cents(fx.to_eur(c.price, c.currency)) for c in comps]
     return Baseline(_trimmed_median_cents(cents), BaselineTag.LIVE, n_comps=len(comps))
 
 

@@ -3,6 +3,28 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- Architecture: generic engine vs category plugins (RamSpec stays)
+
+Operator question: is `RamSpec` the right name if the app does more than RAM? Verdict + refactor.
+
+- **`RamSpec` is correct.** It models RAM-specific fields (ddr_gen / ecc / registered / voltage)
+  meaningless to other categories; a generic name would lie + invite cramming. Generalisation =
+  category-specific specs behind a generic funnel, NOT one renamed spec.
+- The funnel is **already generic**: evaluate / Surface / Listing / LandedCost / FxRates / Comp /
+  live_baseline / deal_pct / ledger / FSM / the LLM-routing boundary are category-agnostic, and
+  `evaluate()` depends on a generic `Assessment`, not `RamSpec`. RAM-specificity is localized to
+  `fitment.py` (compatibility).
+- **Fixed two leaks:** RAM bits had crept into generic modules -- `bootstrap_baseline` +
+  `BOOTSTRAP_EUR_PER_GB` (in valuation) and `query_for` (in serpapi). Moved both into a new
+  `ram.py` (RAM category glue: search-query builder + cold-start pricing). `valuation.py` +
+  `serpapi.py` are now category-clean; `valuation._to_cents` became public `to_cents`.
+- **Generalisation shape (deferred until category #2):** add a sibling category module (e.g.
+  `ssd.py`: its spec + gates + query + bootstrap) and extract a thin `Fitment` protocol so
+  `assess()` takes an injected gate set. NOT built now -- you can't design that abstraction well
+  from a single example.
+
+99 tests pass; ruff/mypy-strict/bandit clean. Pure move, no behaviour change.
+
 ## 2026-06-27 -- Plumbing: structlog redaction (GAP-2) + Phase-1 Listing/LLM-routing (GAP-3)
 
 The two deferred red-team prereqs, landed before P1.3's LLM path.

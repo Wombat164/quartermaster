@@ -18,7 +18,6 @@ from decimal import Decimal
 
 import httpx
 
-from .fitment import RamSpec
 from .valuation import Comp, Currency
 
 SERPAPI_URL = "https://serpapi.com/search.json"
@@ -30,21 +29,6 @@ _SYMBOL_CURRENCY: dict[str, Currency] = {"€": Currency.EUR, "£": Currency.GBP
 
 class SerpApiError(RuntimeError):
     """SerpApi returned an error payload (bad key, exhausted quota, ...)."""
-
-
-def query_for(spec: RamSpec) -> str:
-    """A Google-Shopping search string for the RAM described by ``spec``."""
-    parts: list[str] = []
-    if spec.ddr_gen is not None:
-        parts.append(spec.ddr_gen.value)
-    if spec.speed_mts is not None:
-        parts.append(f"{spec.speed_mts}MHz")
-    if spec.total_gb is not None:
-        parts.append(f"{spec.total_gb}GB")
-    if spec.form_factor is not None:
-        parts.append(spec.form_factor.value)
-    parts.append("RAM")
-    return " ".join(parts)
 
 
 def _currency_from_price(price: str, default: Currency) -> Currency:
