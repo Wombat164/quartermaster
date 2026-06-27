@@ -3,6 +3,23 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- The evaluate() seam: fit + value -> surface (red-team GAP-1)
+
+`src/quartermaster/evaluation.py` composes the two pure cores into one `EvaluatedListing` with a
+`Surface` decision -- the first place fitment + valuation are exercised together (they were disjoint
+libraries; this was the red-team's #1 structural gap).
+
+- `Surface`: DROP (hard-incompatible, not shown) / ALERT_ONLY (surfaced for a human; the Phase-1
+  default, never auto-actioned) / APPROVE_ELIGIBLE ("would be approvable" -- no button in Phase-1).
+- `evaluate(assessment, landed_cents, baseline, *, is_eu, costs_complete, fx_age_days)` (pure):
+  REJECT -> DROP (blockers travel with it); else APPROVE_ELIGIBLE only when ALL of {verdict PASS,
+  baseline LIVE, EU, costs complete, FX fresh (<= 4d)} hold; otherwise ALERT_ONLY with the demoting
+  reasons attached. This is where the red-team's staleness->ALERT + incomplete-cost->ALERT now live.
+- Tier-A: 9 tests (one per surface path + a property: REJECT always DROPs; APPROVE_ELIGIBLE implies
+  every safety condition). 78 pass; ruff/mypy-strict/bandit clean. No new deps.
+- `is_eu` / `costs_complete` + the raw listing record are INPUTS here; they get a home on the
+  Phase-1 `Listing` model next (GAP-3). P1.2b's live baseline plugs straight into `baseline`.
+
 ## 2026-06-27 -- Red-team pass: foundation hardening (pre-P1.2b)
 
 Three independent adversarial reviews (money-correctness, security/safety, gap-analysis) before
