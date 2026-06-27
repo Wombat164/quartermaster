@@ -3,6 +3,22 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- P1.2b (i): live trimmed-median baseline (pure money core)
+
+The compare half of P1.2, money core first. `valuation.py` gains `Comp` (a deterministic price
+comparable, NEVER sent to an LLM) + `live_baseline(comps, fx)`:
+
+- Each comp is FX-converted to EUR cents, then a **10%-trimmed median** -> `market_ref` (robust to a
+  single mispriced listing). Tagged `LIVE`, carrying `n_comps`.
+- Below `MIN_LIVE_COMPS` (5) -> `None`; the caller falls back to the bootstrap table (BOOTSTRAP tag),
+  so the funnel keeps thin-comp listings ALERT-only (plan sec.3 "thin comps -> ALERT").
+- DEVIATION: a stdlib trimmed median instead of numpy/scipy (plan sec.6) -- dep-light + exact on
+  integer cents; revisit if weighting / IQR is needed.
+- Tier-A: 5 tests (too-few -> None, exact median, outlier-resistance, currency conversion, +
+  property: result within the [min, max] comp range). 83 pass; ruff/mypy-strict/bandit clean.
+- NEXT P1.2b (ii): the SerpApi Google-Shopping client (httpx, respx-mocked) that *produces* the
+  `Comp` list from live data, reading the key from `config.serpapi_api_key`.
+
 ## 2026-06-27 -- The evaluate() seam: fit + value -> surface (red-team GAP-1)
 
 `src/quartermaster/evaluation.py` composes the two pure cores into one `EvaluatedListing` with a

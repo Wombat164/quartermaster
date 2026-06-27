@@ -14,7 +14,7 @@ here a `Baseline` is taken or produced from the cold-start table, always carryin
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 from enum import StrEnum
@@ -77,6 +77,16 @@ class Baseline:
 
 
 @dataclass(frozen=True, slots=True)
+class Comp:
+    """A single price comparable from a deterministic source (NEVER sent to an LLM). Any
+    first-class currency; ``source`` is provenance (e.g. "serpapi_google_shopping")."""
+
+    price: Decimal
+    currency: Currency
+    source: str
+
+
+@dataclass(frozen=True, slots=True)
 class LandedCost:
     """All-in cost of buying a listing, priced in any first-class currency. `import_vat_rate`
     is > 0 only when the purchase adds VAT (cross-border / retail); private EU classifieds add
@@ -116,6 +126,34 @@ def bootstrap_baseline(spec: RamSpec) -> Baseline | None:
     if per_gb is None:
         return None
     return Baseline(_to_cents(per_gb * spec.total_gb), BaselineTag.BOOTSTRAP)
+
+
+# A live baseline needs enough comps to trust; below this it stays bootstrap/ALERT (plan sec.3).
+MIN_LIVE_COMPS = 5
+# Drop the top + bottom fraction before the median, so a single mispriced comp can't move it.
+TRIM_FRACTION = Decimal("0.1")
+
+
+def _trimmed_median_cents(values: Sequence[int]) -> int:
+    ordered = sorted(values)
+    k = int(len(ordered) * TRIM_FRACTION)
+    core = ordered[k : len(ordered) - k] or ordered
+    mid = len(core) // 2
+    if len(core) % 2 == 1:
+        return core[mid]
+    return (core[mid - 1] + core[mid]) // 2
+
+
+def live_baseline(comps: Sequence[Comp], fx: FxRates) -> Baseline | None:
+    """Trimmed-median market reference (EUR cents) over deterministic comps, each FX-converted.
+
+    ``None`` when there are too few comps to trust -- the caller then falls back to the bootstrap
+    table (tagged so the funnel keeps the listing ALERT-only).
+    """
+    if len(comps) < MIN_LIVE_COMPS:
+        return None
+    cents = [_to_cents(fx.to_eur(c.price, c.currency)) for c in comps]
+    return Baseline(_trimmed_median_cents(cents), BaselineTag.LIVE, n_comps=len(comps))
 
 
 def deal_pct(landed_cents: int, market_ref_cents: int) -> Decimal:
