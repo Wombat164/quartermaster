@@ -3,6 +3,26 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- P1.3a: deterministic extraction (heuristic-first, the cross-val oracle)
+
+`extract.py` -- regex parse of classifieds text into a `RamSpec` + price, NO LLM. Applies the
+edge-LLM doctrine (heuristic-first / LLM-enriches): this deterministic read is both a standalone
+extractor for structured listings AND the oracle the LLM path (P1.3b) must corroborate on
+money-critical fields (price, capacity), else the spec stays UNVERIFIED.
+
+- `parse_spec(text) -> RamSpec`: DDR gen, speed (MHz / MT/s / DDRx-NNNN), kit (NxM GB) or bare
+  capacity (assume 1x; LLM cross-checks), form factor (SO-DIMM/UDIMM), ECC, registered. Unparsed
+  fields stay None -> UNVERIFIED (never guesses a critical field into a PASS).
+- `parse_price(text) -> (Decimal, Currency) | None`: currency symbol/code either side of the number;
+  EU + US decimal/thousands separators normalised; non-positive / unparseable -> None.
+- RAM-aware patterns + generic price parsing live in `extract.py` (the ingest concern), keeping the
+  engine category-clean; generalises behind a protocol with category #2.
+- Tier-A: 14 tests incl. totality properties (parse_spec / parse_price never raise on arbitrary
+  text; any parsed price > 0). 113 pass; ruff/mypy-strict/bandit clean. No new deps (stdlib `re`).
+- NEXT P1.3b: LLM enrichment -- Claude structured output over the email body (B1-allowed via
+  `assert_llm_allowed`) + llm-guard (injection defense) + THIS extractor as cross-validation; then
+  P1.3c the Gmail one-label reader.
+
 ## 2026-06-27 -- Architecture: generic engine vs category plugins (RamSpec stays)
 
 Operator question: is `RamSpec` the right name if the app does more than RAM? Verdict + refactor.
