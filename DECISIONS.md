@@ -3,6 +3,24 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- P1.3b adapter: Anthropic structured-output extractor (llm.py)
+
+The real `LlmExtractor` for ingest. Two layers so the parsing is unit-tested without the SDK or a
+live call:
+
+- `build_extractor(create=...)`: PURE core -- forces a single structured-output tool call
+  (`emit_listing`, JSON-schema'd to the RAM fields), parses the tool input, defensively coerces
+  values (numbers-as-strings/floats -> Decimal/int, junk -> None; never raises).
+- `anthropic_extractor(api_key=...)`: thin wiring -- constructs `anthropic.Anthropic` + binds
+  `messages.create`. Key passed in (from `config.anthropic_api_key`), never read here.
+- Model: Haiku 4.5 default (cheap/fast for field extraction; overridable). System prompt re-states
+  the data-not-instructions framing; the model has NO tools beyond the emitter (no agency), and its
+  output is then cross-validated by ingest.
+- Adds `anthropic` (light SDK -- httpx/pydantic, no torch). 5 tests via a fake `create` (parse,
+  string/float coercion, junk->None, no-tool->empty, forced-tool + wrapped-prompt). 133 pass; clean.
+- P1.3 is now complete except the I/O edge: NEXT P1.3c the Gmail one-label reader (bodies ->
+  `extract_listing`), then P1.4 digest.
+
 ## 2026-06-27 -- P1.3b(ii): ingest orchestration + cross-validation (the safety core)
 
 `ingest.py` ties the P1.3 pieces together for one classifieds body: `assert_llm_allowed` (B1) ->
