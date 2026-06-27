@@ -2,11 +2,11 @@
 
 ![Quartermaster](assets/quartermaster-lockup.svg)
 
-> **Codename: Quartermaster** · repo `deal-hunter-agent` · *Acquisitions, rationed.*
+> **Codename: Quartermaster** · repo `quartermaster` · *Acquisitions, rationed.*
 
 A personal agent that **finds the best value-for-fit RAM** (and later: any fitment-gated hardware) across EU classifieds + multi-retailer price data, and ranks it by **live landed cost vs the market** -- so you see the best deal available now. Buying stays in your hands: a one-click-approved Gixen auction snipe within a hard budget is a **later phase (Phase 2)**.
 
-**Docs site:** <https://wombat164.github.io/deal-hunter-agent/> · Brand assets, palette & fonts: [`assets/BRAND.md`](assets/BRAND.md) · candidate domain **quartermaster.bid**.
+**Docs site:** <https://wombat164.github.io/quartermaster/> · Brand assets, palette & fonts: [`assets/BRAND.md`](assets/BRAND.md) · candidate domain **quartermaster.bid**.
 
 > **Status (2026-06-27):** **Public + MIT.** v0 foundation + **P1.1 fitment core** shipped (toolchain, money/safety schema core, CI + egress blocker, the deterministic compatibility gate). **Phase 1 = SEARCH + COMPARE first**; bid/buy is Phase 2 (Gate 0: eBay API dropped). See [`DECISIONS.md`](DECISIONS.md).
 
