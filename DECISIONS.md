@@ -3,6 +3,34 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- P1.2a: valuation money core (EUR/USD/GBP first-class)
+
+The Phase-1 "value" block, pure + network-free (`src/quartermaster/valuation.py`). Money in
+`Decimal`, rounded to integer **EUR cents** (the ledger unit).
+
+- **EUR / USD / GBP are first-class** (`Currency` enum + `FxRates`): no currency is special-cased --
+  EUR just has rate 1. `FxRates` validates every currency is present + positive and EUR == 1. EUR is
+  the settlement/comparison base (the ledger is EUR cents); listings + comps may be priced in any
+  first-class currency and convert via one FX snapshot (sourced upstream, e.g. ECB).
+  **(Operator directive: make USD + GBP first-class just like EUR.)**
+- `LandedCost.eur_cents(fx)`: `(price + shipping) * fx -> + import VAT -> ROUND_HALF_UP to cents`.
+  `import_vat_rate` defaults 0 (private EU classifieds add none); > 0 for cross-border/retail.
+- `bootstrap_baseline(spec)`: cold-start EUR/GB table -> a `Baseline` tagged `bootstrap`
+  (vs `live`/`stale`) so every valuation carries provenance (plan sec.3 cold-start + sec.7).
+- `deal_pct = clamp((market_ref - landed) / market_ref, 0, 1)`.
+- Tier-A: 15 worked examples + 4 hypothesis properties (eur_cents non-negative + monotonic in price;
+  EUR conversion is identity; deal_pct stays in [0,1]). valuation.py 98% cov; ruff/mypy-strict/bandit
+  clean; 59 tests pass. No new deps (stdlib `Decimal`).
+- **FX source (NOT hardcoded):** `fx.py::ecb_fx_rates()` builds a timestamped `FxRates` snapshot
+  from ECB euro reference rates via the `currency_converter` library (bundled + refreshable;
+  `FxSnapshot.as_of` lets callers guard staleness). The `0.92 / 1.17` literals exist only in tests.
+- **Scope:** the LIVE SerpApi Google-Shopping comp baseline (real comps -> trimmed median) is P1.2b.
+
+## 2026-06-27 -- Repo renamed: deal-hunter-agent -> quartermaster
+
+Aligned the repo slug + Pages URL with the project/package/brand name (operator request). All
+references updated; docs site now at <https://wombat164.github.io/quartermaster/>.
+
 ## 2026-06-27 -- Docs site: MkDocs Material + GitHub Pages (docs-as-code)
 
 A docs site accompanies the repo (the plan's deferred "mkdocs + ADR site", sec.6). Chose **MkDocs
