@@ -3,6 +3,26 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- P1.3b(i): injection defense, middle ground (architecture-first, llm-guard pluggable)
+
+Operator chose a MIDDLE GROUND between a light heuristic and the full (heavy) llm-guard dep.
+`guard.py` is defense-in-depth where the strength is ARCHITECTURE, not one ML classifier:
+
+- `wrap_untrusted(body)`: frames the body in hard delimiters as DATA, not instructions.
+- `HeuristicScanner` (dependency-light): flags model-targeting injection patterns ("ignore previous
+  instructions", fake `<system>` tags, "you are now", reveal-prompt, ...), strips control chars, caps
+  length (8000) -> `ScanResult(safe, sanitized, reasons)`.
+- `PromptScanner` Protocol = the extension point: an `LlmGuardScanner` (ML) drops in behind a future
+  `guard` extra via `default_scanner()`; NO torch/transformers in the base install (pluggable-backend
+  pattern, per the shared-memory reference).
+- The real blast-radius limiter is downstream (P1.3b-ii): a fixed structured-output schema, NO tools/
+  agency, and money-critical fields cross-validated vs the deterministic extractor -> an injection at
+  worst yields a wrong RamSpec, caught -> UNVERIFIED.
+- 7 tests; 120 pass; ruff/mypy-strict/bandit clean; stdlib only.
+- NEXT P1.3b(ii): extraction orchestration (`assert_llm_allowed` -> guard -> injected Claude
+  structured-output -> cross-val -> `ExtractedListing`), LLM client injected/mocked; then the
+  anthropic adapter + P1.3c Gmail one-label reader.
+
 ## 2026-06-27 -- P1.3a: deterministic extraction (heuristic-first, the cross-val oracle)
 
 `extract.py` -- regex parse of classifieds text into a `RamSpec` + price, NO LLM. Applies the
