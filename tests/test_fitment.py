@@ -235,3 +235,27 @@ def test_in_spec_matched_kits_pass(spec: RamSpec) -> None:
     a = assess(spec, G513QR)
     assert a.verdict is Verdict.PASS
     assert a.blockers == ()
+
+
+@given(st.integers(max_value=0))
+def test_nonpositive_capacity_always_rejected(cap: int) -> None:
+    """A 0 / negative module capacity is impossible hardware -> REJECT, never PASS."""
+    spec = RamSpec(
+        ddr_gen=DdrGen.DDR4,
+        form_factor=FormFactor.SODIMM,
+        capacity_gb_per_module=cap,
+        module_count=2,
+    )
+    assert assess(spec, G513QR).verdict is Verdict.REJECT
+
+
+@given(st.integers(max_value=0))
+def test_nonpositive_module_count_always_rejected(count: int) -> None:
+    """A 0 / negative module count is impossible -> REJECT (and never a negative market_ref)."""
+    spec = RamSpec(
+        ddr_gen=DdrGen.DDR4,
+        form_factor=FormFactor.SODIMM,
+        capacity_gb_per_module=16,
+        module_count=count,
+    )
+    assert assess(spec, G513QR).verdict is Verdict.REJECT

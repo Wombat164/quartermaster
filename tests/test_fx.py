@@ -24,3 +24,4 @@ def test_snapshot_age() -> None:
     snap = ecb_fx_rates()
     assert snap.age_days(snap.as_of) == 0
     assert snap.age_days(snap.as_of + dt.timedelta(days=5)) == 5
+    assert snap.age_days(snap.as_of - dt.timedelta(days=3)) == 0  # clock skew clamps to 0

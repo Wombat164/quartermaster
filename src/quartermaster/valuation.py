@@ -48,6 +48,12 @@ class FxRates:
                 raise ValueError(f"FxRates missing rate for {cur.value}")
             if rate <= 0:
                 raise ValueError(f"FxRates rate for {cur.value} must be positive")
+            # Plausibility band (EUR-per-unit): catch a mis-scaled / inverted / corrupt rate
+            # before it silently multiplies every landed cost. EUR/USD/GBP all sit in [0.1, 10].
+            if cur is not Currency.EUR and not (Decimal("0.1") <= rate <= Decimal(10)):
+                raise ValueError(
+                    f"FxRates rate for {cur.value} ({rate}) outside plausibility band 0.1..10"
+                )
         if self.eur_per[Currency.EUR] != Decimal(1):
             raise ValueError("FxRates: EUR rate must be exactly 1")
 
@@ -80,6 +86,12 @@ class LandedCost:
     shipping: Decimal = Decimal(0)
     currency: Currency = Currency.EUR
     import_vat_rate: Decimal = Decimal(0)
+
+    def __post_init__(self) -> None:
+        if self.price < 0 or self.shipping < 0:
+            raise ValueError("LandedCost price and shipping must be non-negative")
+        if not (Decimal(0) <= self.import_vat_rate < Decimal(1)):
+            raise ValueError("import_vat_rate must be in [0, 1) -- a rate like 0.21, not 21")
 
     def eur_cents(self, fx: FxRates) -> int:
         subtotal = fx.to_eur(self.price + self.shipping, self.currency)

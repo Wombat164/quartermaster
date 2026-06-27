@@ -44,3 +44,13 @@ def test_releases_only_on_leaving_holding() -> None:
     assert not releases_budget(State.FIRED, State.WON)  # still holding
     # fail-closed on money: moving to reconcile must NOT release
     assert not releases_budget(State.FIRED, State.NEEDS_HUMAN_RECONCILE)
+
+
+def test_fired_cannot_silently_release_via_error() -> None:
+    # A fired-but-unconfirmed snipe must route to NEEDS_HUMAN_RECONCILE, never ERROR.
+    assert not can_transition(State.FIRED, State.ERROR)
+    assert can_transition(State.FIRED, State.NEEDS_HUMAN_RECONCILE)
+    # The ONLY budget-releasing edge out of FIRED is a confirmed LOST.
+    for dst in ALLOWED[State.FIRED]:
+        if releases_budget(State.FIRED, dst):
+            assert dst is State.LOST

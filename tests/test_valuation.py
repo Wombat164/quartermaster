@@ -13,6 +13,7 @@ from hypothesis import strategies as st
 
 from quartermaster.fitment import DdrGen, FormFactor, RamSpec
 from quartermaster.valuation import (
+    BOOTSTRAP_EUR_PER_GB,
     BaselineTag,
     Currency,
     FxRates,
@@ -52,6 +53,16 @@ def test_landed_rounds_half_up() -> None:
     assert LandedCost(price=Decimal("9.995")).eur_cents(FX) == 1000  # 999.5 -> 1000
 
 
+def test_landed_rejects_absurd_vat_rate() -> None:
+    with pytest.raises(ValueError, match="import_vat_rate"):
+        LandedCost(price=Decimal("100.00"), import_vat_rate=Decimal(21))  # 21, not 0.21
+
+
+def test_landed_rejects_negative_price() -> None:
+    with pytest.raises(ValueError, match="non-negative"):
+        LandedCost(price=Decimal("-1.00"))
+
+
 def test_to_eur_eur_is_identity() -> None:
     assert FX.to_eur(Decimal("123.45"), Currency.EUR) == Decimal("123.45")
 
@@ -77,6 +88,14 @@ def test_fx_rejects_nonpositive() -> None:
         FxRates({Currency.EUR: Decimal(1), Currency.USD: Decimal(0), Currency.GBP: Decimal("1.17")})
 
 
+def test_fx_rejects_implausible_rate() -> None:
+    # A mis-scaled/inverted rate (USD=100) must not silently 100x every landed cost.
+    with pytest.raises(ValueError, match="plausibility band"):
+        FxRates(
+            {Currency.EUR: Decimal(1), Currency.USD: Decimal(100), Currency.GBP: Decimal("1.17")}
+        )
+
+
 # --- baseline + deal scoring ---
 
 
@@ -96,6 +115,11 @@ def test_bootstrap_ddr4_64gb() -> None:
 def test_bootstrap_unknown_returns_none() -> None:
     assert bootstrap_baseline(RamSpec(ddr_gen=DdrGen.DDR4)) is None  # no size
     assert bootstrap_baseline(RamSpec(capacity_gb_per_module=16, module_count=2)) is None  # no gen
+
+
+def test_bootstrap_table_covers_all_ddr_gens() -> None:
+    # Adding a DdrGen without a table row would silently give that generation no valuation.
+    assert set(BOOTSTRAP_EUR_PER_GB) == set(DdrGen)
 
 
 def test_deal_pct_below_market() -> None:
