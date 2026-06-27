@@ -3,6 +3,27 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- P1.3b(ii): ingest orchestration + cross-validation (the safety core)
+
+`ingest.py` ties the P1.3 pieces together for one classifieds body: `assert_llm_allowed` (B1) ->
+guard scan -> `wrap_untrusted` + INJECTED LLM (`Callable[[str], LlmExtraction]`; the real Anthropic
+client is the next thin adapter) -> cross-validate vs the regex extractor -> `ExtractedListing`.
+
+- **Cross-validation is the safety core:** per money-critical field (price, total capacity), the LLM
+  is trusted only when it AGREES with the deterministic read; on conflict the DETERMINISTIC value
+  wins and confidence drops to LOW. Single-source field -> MEDIUM; agreement -> HIGH. So an injected
+  or hallucinated number can at worst yield a LOW-confidence spec, never a silently-trusted one.
+- Capacity is reconciled on TOTAL GB (the money value); when totals agree the LLM's NxM config is
+  preferred (it parses kits better than the regex's bare-capacity guess).
+- The model's enum strings (ddr_gen / form / currency) are VALIDATED into our enums, never raw.
+- Unsafe body (guard flagged) -> the LLM is never called; deterministic-only, LOW.
+- **Money bug caught + fixed:** `parse_price("DDR4 EUR 80")` matched the `4` in DDR4 as the price ->
+  added a not-preceded-by-letter lookbehind + a regression test (found by the orchestration test).
+- Tier-A: 8 ingest tests (agreement HIGH; price/capacity conflict LOW + deterministic-wins; LLM-only
+  MEDIUM; unsafe-skips-LLM; boundary-block; to_listing). 128 pass; ruff/mypy-strict/bandit clean.
+- NEXT: the Anthropic adapter (the real `LlmExtractor`, structured-output tool-call) + P1.3c the
+  Gmail one-label reader -> then P1.4 digest.
+
 ## 2026-06-27 -- P1.3b(i): injection defense, middle ground (architecture-first, llm-guard pluggable)
 
 Operator chose a MIDDLE GROUND between a light heuristic and the full (heavy) llm-guard dep.

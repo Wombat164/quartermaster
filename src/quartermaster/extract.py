@@ -91,7 +91,7 @@ _CUR: dict[str, Currency] = {
 _NUM = r"\d[\d.,]*"
 _PRICE_RE = re.compile(
     rf"(?P<a>€|£|\$|EUR|GBP|USD)\s?(?P<an>{_NUM})"
-    rf"|(?P<bn>{_NUM})\s?(?P<b>€|£|\$|EUR|GBP|USD)",
+    rf"|(?<![A-Za-z])(?P<bn>{_NUM})\s?(?P<b>€|£|\$|EUR|GBP|USD)",  # number not glued to letters
     re.IGNORECASE,
 )
 
