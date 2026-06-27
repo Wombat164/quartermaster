@@ -3,6 +3,27 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- Public-first posture: MIT license, config separation, security docs
+
+The repo goes **public** from here (operator decision: public from the get-go). Pre-flip audit:
+gitleaks full-history = no leaks; no PII / no tracked secrets or DB state; `.gitignore` already
+blocks every secret/state class. Changes:
+
+- **License: MIT** (was "Proprietary -- personal use only"). `LICENSE` added; `pyproject` updated.
+  Copyright "2026 Wombat164" (the repo's pseudonymous owner; keeps it PII-free).
+- **Config separation (12-factor):** `src/quartermaster/config.py` (pydantic-settings, added as a
+  runtime dep -- on-plan per sec.6). Runtime config via env (prefix `QM_`) or a gitignored `.env`;
+  `dry_run` defaults **True** (fail-safe). Secret fields are `SecretStr` (masked, never logged).
+  `.env.example` is rendered FROM the model (`render_env_example`) with a drift test -- can't diverge.
+- **Secrets in the operator's store (Bitwarden), injected via env** at runtime
+  (`export QM_SERPAPI_API_KEY=$(bw get password serpapi)`); never committed/read-from-disk in normal
+  use. **DEVIATION/extension** from the plan's keyring-only note (sec.4/sec.6): Bitwarden is the
+  operator's actual secret store; keyring stays a supported alternative backend.
+- **SECURITY.md** added: security model + private vuln reporting via GitHub security advisories.
+- README: Configuration & secrets section + License/Security pointers.
+- Tests: `tests/test_config.py` -- fail-safe `dry_run` default, `.env.example` no-drift, SecretStr
+  never leaks in `repr`/`str`.
+
 ## 2026-06-27 -- P1.1: fitment + compatibility core (the verify funnel)
 
 First Phase-1 (search+compare) increment. `src/quartermaster/fitment.py`: a deterministic,

@@ -4,13 +4,14 @@ version = "0.0.0"
 description = "Personal value-for-fit RAM acquisition agent (ranked digest + human-approved Gixen snipe)."
 readme = "README.md"
 requires-python = ">=3.13"
-license = { text = "Proprietary -- personal use only" }
+license = { text = "MIT" }
 # Runtime deps are added per functional block as v1 lands (plan sec.6). v0 is
 # foundation only: no bidding / LLM / eBay / SPD-DB. The schema core (increment 2)
 # needs only the persistence layer.
 dependencies = [
   "sqlalchemy>=2.0",
   "alembic>=1.13",
+  "pydantic-settings>=2.14.2",
 ]
 
 [project.optional-dependencies]

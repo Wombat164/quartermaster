@@ -25,6 +25,19 @@ Deep-research (`docs/background/ebay-gate0-research.md`) found production eBay B
 4. **EU-only auto-bid**; fail-closed kill-switch + `DRY_RUN` default-true; arming real money needs two independent signals.
 5. **Reserved-budget ledger with a release path** (Σ live max-bids ≤ cap, released on every terminal state).
 
+## Configuration & secrets
+
+Config is separate from the program (12-factor). Everything runtime-tunable is an env var
+prefixed `QM_` (or a gitignored `.env`) -- copy [`.env.example`](.env.example) to `.env` to start.
+Secrets are `SecretStr` and live in your **secret store, injected via env** -- never committed:
+
+```sh
+export QM_SERPAPI_API_KEY="$(bw get password serpapi)"   # e.g. Bitwarden
+```
+
+`QM_DRY_RUN` defaults to **true** (fail-safe). Model: `src/quartermaster/config.py`; full
+security posture: [`SECURITY.md`](SECURITY.md).
+
 ## Repo structure
 ```
 docs/
@@ -48,4 +61,4 @@ PROMPT-FOR-RCDE.md              kickoff prompt for the implementing agent
 ## Tech (chosen in OSS research, see plan §6)
 Python 3.13 · `uv` · `httpx`+`tenacity`+`pyrate-limiter` · Claude native structured outputs + `llm-guard` · `numpy`/`scipy.stats` + `CurrencyConverter` · Gixen `api.php` · `python-statemachine` · APScheduler 3.x + SQLAlchemy 2 + Alembic · `respx`+`vcrpy` · `structlog` + healthchecks.io · GitHub Actions (ruff/mypy/bandit/pip-audit/gitleaks).
 
-*Private repo — personal use only. See plan §2/§11 for GDPR & ToS constraints.*
+Licensed **MIT** ([`LICENSE`](LICENSE)). Security model + private reporting: [`SECURITY.md`](SECURITY.md). Personal-use agent; see plan §2/§11 for GDPR & ToS constraints.
