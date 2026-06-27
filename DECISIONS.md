@@ -3,6 +3,21 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- P1.4a: the ranked digest (the human-facing surface)
+
+`digest.py` -- Phase-1's only output. `DigestItem` (listing identity + `EvaluatedListing` +
+extraction confidence) -> `rank()` (drop DROP-surface; APPROVE-eligible first, then deal% desc) ->
+`render_digest()` (ASCII; one-line header scorecard: DRY_RUN / FX age / approve+alert counts; per-row
+tag, deal%, landed EUR, confidence, and the demoting reason). Pure + deterministic, ASCII-only.
+
+- 4 tests (tier-then-deal ordering + DROP excluded; header + rows; alert reason on the row; empty /
+  drop-only). 137 pass; ruff/mypy-strict/bandit clean.
+- The pipeline now renders **end-to-end** (sample verified): listing -> fitment -> landed + FX ->
+  baseline -> deal% -> surface -> ranked digest.
+- REMAINING Phase-1 (I/O + assembly, none safety-critical): an `assemble()` tying ExtractedListing
+  -> DigestItem (one digest pass), P1.3c the Gmail one-label reader, the CLI entry point, the
+  healthchecks ping, and the golden set. The funnel + cross-val + surface logic are all in + tested.
+
 ## 2026-06-27 -- P1.3b adapter: Anthropic structured-output extractor (llm.py)
 
 The real `LlmExtractor` for ingest. Two layers so the parsing is unit-tested without the SDK or a
