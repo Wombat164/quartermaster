@@ -3,6 +3,31 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- P1.1: fitment + compatibility core (the verify funnel)
+
+First Phase-1 (search+compare) increment. `src/quartermaster/fitment.py`: a deterministic,
+network-free RAM compatibility filter -- the "funnel before the click" (plan sec.4 verify block).
+
+- **Model:** `RamSpec` (all fields Optional; `None` = "not stated" = unknown) + `FitmentProfile`
+  (target-machine constraints). A concrete `G513QR` profile seeds it -- the project's founding
+  use-case (ASUS ROG Strix G15 G513QR: DDR4-3200 SO-DIMM, 2 slots, 64 GB max [2x32], non-ECC, 1.2 V).
+- **Gates:** 9 pure `(spec, profile) -> GateResult` predicates (ddr_gen, form_factor, buffered,
+  ecc, per_module_capacity, kit_fit, dual_channel, speed, voltage). `assess()` aggregates: REJECT
+  dominates; else any RISK or any CRITICAL-gate UNKNOWN -> UNVERIFIED; else PASS. Honours the plan's
+  "unknown on a critical gate -> never PASS" rule.
+- **Verdict semantics:** REJECT (hard-incompatible) / UNVERIFIED (missing critical data OR a risk
+  like ECC-on-non-ECC) / PASS (fits; compatible-but-suboptimal stays PASS with a note, e.g.
+  single-channel or below-rated speed).
+- **Choices / deviations:** unstated `registered` assumed unbuffered (SO-DIMM RDIMM is exotic);
+  ECC-on-non-ECC -> RISK (UNVERIFIED), not REJECT (usually boots as non-ECC, not guaranteed);
+  speed + voltage are non-critical (a same-gen module always runs, just maybe slower / at JEDEC).
+- **Tier-A rigor (sec.9):** 13 worked examples (one per path) + 5 hypothesis properties (assess is
+  total; unknown-critical never PASSes; wrong-gen always REJECTs; oversized-module always REJECTs;
+  in-spec matched kits always PASS). fitment.py 100% cov; ruff + mypy-strict + bandit clean; suite
+  37 passing. No new runtime deps (stdlib `dataclasses`+`enum`); no LLM, no network.
+- **Scope:** consumes an already-structured `RamSpec`; free-text -> `RamSpec` extraction (LLM +
+  llm-guard) is P1.3, and the gate set will grow (CAS latency, mislabel heuristics, the v1 golden set).
+
 ## 2026-06-26 -- STRATEGIC PIVOT: search+compare first; bid/buy deferred; eBay API dropped
 
 **Gate 0 RESOLVED -> NO-GO on the eBay API.** The deep-research
