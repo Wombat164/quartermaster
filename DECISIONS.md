@@ -3,6 +3,27 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- Plumbing: structlog redaction (GAP-2) + Phase-1 Listing/LLM-routing (GAP-3)
+
+The two deferred red-team prereqs, landed before P1.3's LLM path.
+
+- **logging.py (GAP-2):** `configure_logging(settings)` wires structlog (JSON, level filter, ISO
+  timestamp) with a **default-deny redaction processor** -- any field whose KEY matches a secret
+  marker (api_key / token / password / secret / authorization / ping_url / ...) is masked, so a
+  secret can't reach a sink even if a caller puts it in an event. A test proves a logged
+  `serpapi_api_key` value never appears in output. Born redacted, before the first client logs.
+- **listings.py (GAP-3):** `Listing` (Phase-1 discovered-item record: source/title/url/price/...,
+  separate from the Phase-2 `Snipe.Source`) + `ListingSource` (CLASSIFIEDS_EMAIL / SERPAPI_SHOPPING /
+  EBAY) + the **B1/B2 boundary**: `llm_allowed` / `assert_llm_allowed` -> only classifieds-email
+  bodies may reach an LLM; SerpApi + eBay are deterministic-only and raise `LlmBoundaryViolation`.
+  The guard + its test exist NOW so P1.3 cannot regress the source-leak boundary.
+- Adds `structlog`. 99 tests pass; ruff/mypy-strict/bandit clean (tests ignore S105/S106 -- fake
+  secret fixtures).
+
+This closes the red-team's "composition + plumbing" prereq (evaluate seam + GAP-2 + GAP-3). NEXT:
+P1.3 ingest (classifieds alert-email extraction via LLM + llm-guard + regex cross-val; eBay
+deterministic-only) -> P1.4 ranked digest + scorecard + CLI + golden set.
+
 ## 2026-06-27 -- P1.2b (ii): SerpApi Google-Shopping client (closes P1.2)
 
 The data source that produces the `Comp` list for `live_baseline`. `serpapi.py`:
