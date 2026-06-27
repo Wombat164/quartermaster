@@ -27,6 +27,9 @@ dev = [
   "pip-audit>=2.7",
   "pre-commit>=4",
 ]
+docs = [
+    "mkdocs-material>=9.7.6",
+]
 
 [build-system]
 requires = ["hatchling"]

@@ -1,0 +1,76 @@
+site_name: Quartermaster
+site_description: >-
+  Personal value-for-fit RAM deal-hunter agent -- filters, values, and ranks listings into a
+  digest (search + compare; human-approved bidding is a later phase).
+site_url: https://wombat164.github.io/deal-hunter-agent/
+repo_url: https://github.com/Wombat164/deal-hunter-agent
+repo_name: Wombat164/deal-hunter-agent
+edit_uri: edit/main/docs/
+copyright: MIT-licensed. (c) 2026 Wombat164.
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - The Plan (authoritative): plan-final.md
+  - UX & digest: ux-mock.md
+  - Security: security.md
+  - Decisions (ADR log): decisions.md
+  - Background:
+      - RAM upgrade guide: background/ram-upgrade-guide.md
+      - Price-comparison tools: background/price-comparison-tools.md
+      - eBay Gate-0 research: background/ebay-gate0-research.md
+  - History:
+      - Design scaffold: history/design-scaffold.md
+      - Plan v1 (draft): history/plan-v1-draft.md
+      - Plan v2 (hardened): history/plan-v2-hardened.md

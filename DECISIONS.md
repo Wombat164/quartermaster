@@ -3,6 +3,21 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-27 -- Docs site: MkDocs Material + GitHub Pages (docs-as-code)
+
+A docs site accompanies the repo (the plan's deferred "mkdocs + ADR site", sec.6). Chose **MkDocs
+Material -> GitHub Pages** over the GitHub Wiki: docs-as-code (versioned with the repo, PR-reviewed,
+CI-built `--strict`) instead of an out-of-band wiki.
+
+- `mkdocs.yml` (Material theme, light/dark, nav over the existing `docs/` tree). Added a `docs`
+  optional-dependency extra (`mkdocs-material`).
+- `docs/index.md` landing page. `docs/security.md` + `docs/decisions.md` **include the canonical
+  root `SECURITY.md` / `DECISIONS.md`** via `pymdownx.snippets` (`--8<--`) -- single source of truth,
+  no drift.
+- `.github/workflows/docs.yml`: builds `mkdocs build --strict` (fails on broken links/orphans) and
+  deploys to Pages (least-privilege `pages: write` + `id-token: write`; `configure-pages enablement`).
+- `site/` + `.cache/` gitignored; README links the site (https://wombat164.github.io/deal-hunter-agent/).
+
 ## 2026-06-27 -- Public-first posture: MIT license, config separation, security docs
 
 The repo goes **public** from here (operator decision: public from the get-go). Pre-flip audit:
