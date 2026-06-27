@@ -16,7 +16,7 @@ CI-built `--strict`) instead of an out-of-band wiki.
   no drift.
 - `.github/workflows/docs.yml`: builds `mkdocs build --strict` (fails on broken links/orphans) and
   deploys to Pages (least-privilege `pages: write` + `id-token: write`; `configure-pages enablement`).
-- `site/` + `.cache/` gitignored; README links the site (https://wombat164.github.io/deal-hunter-agent/).
+- `site/` + `.cache/` gitignored; README links the site (https://wombat164.github.io/quartermaster/).
 
 ## 2026-06-27 -- Public-first posture: MIT license, config separation, security docs
 

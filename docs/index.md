@@ -1,7 +1,7 @@
 # Quartermaster
 
 !!! quote ""
-    **Codename: Quartermaster** · repo `deal-hunter-agent` · *Acquisitions, rationed.*
+    **Codename: Quartermaster** · repo `quartermaster` · *Acquisitions, rationed.*
 
 A personal agent that finds the **best value-for-fit RAM** (and later, any fitment-gated
 hardware) across EU classifieds + multi-retailer price data, and ranks it by **live landed cost
@@ -11,7 +11,7 @@ click**: compatibility gating, live landed-cost valuation, and budget discipline
 Buying stays in your hands -- a one-click-approved auction snipe within a hard budget is a
 **later phase**.
 
-[Source on GitHub](https://github.com/Wombat164/deal-hunter-agent){ .md-button .md-button--primary }
+[Source on GitHub](https://github.com/Wombat164/quartermaster){ .md-button .md-button--primary }
 [The Plan](plan-final.md){ .md-button }
 [Security](security.md){ .md-button }
 

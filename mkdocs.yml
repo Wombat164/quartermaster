@@ -2,9 +2,9 @@ site_name: Quartermaster
 site_description: >-
   Personal value-for-fit RAM deal-hunter agent -- filters, values, and ranks listings into a
   digest (search + compare; human-approved bidding is a later phase).
-site_url: https://wombat164.github.io/deal-hunter-agent/
-repo_url: https://github.com/Wombat164/deal-hunter-agent
-repo_name: Wombat164/deal-hunter-agent
+site_url: https://wombat164.github.io/quartermaster/
+repo_url: https://github.com/Wombat164/quartermaster
+repo_name: Wombat164/quartermaster
 edit_uri: edit/main/docs/
 copyright: MIT-licensed. (c) 2026 Wombat164.
 

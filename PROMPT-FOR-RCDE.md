@@ -5,11 +5,11 @@ Copy-paste the block below into a fresh Claude Code session to begin implementat
 ---
 
 ```
-Retrieve and start implementing my "deal-hunter-agent" project.
+Retrieve and start implementing my "quartermaster" project.
 
 1. Clone the private repo and open it:
-   gh repo clone Wombat164/deal-hunter-agent
-   cd deal-hunter-agent
+   gh repo clone Wombat164/quartermaster
+   cd quartermaster
 
 2. Read docs/plan-final.md IN FULL — it is the authoritative plan (it supersedes
    everything in docs/history/). Skim README.md and docs/background/ for context.
@@ -56,6 +56,6 @@ Work in small, reviewable increments. Pause for my approval at each version boun
 ---
 
 ### Notes for whoever runs this
-- The repo is **private** under the GitHub account **`Wombat164`**. If you cloned under a different account, adjust the `gh repo clone` path.
+- The repo is now **public** under the GitHub account **`Wombat164`**. If you cloned under a different account, adjust the `gh repo clone` path.
 - `docs/plan-final.md` is the single source of truth. If you change the plan, update that file and add a `DECISIONS.md` entry — don't let code and plan drift.
 - The first *real* milestone after v0 is **v1 (alert-only digest, no bidding)** — get value flowing before touching money.
