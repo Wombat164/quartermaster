@@ -3,6 +3,24 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-28 -- P1.4c: SerpApi live-baseline resolver (real comps -> APPROVE-eligible)
+
+`pipeline.make_baseline_resolver(fetch, fx, fallback=bootstrap_baseline)` returns a `BaselineResolver`
+tying the existing pieces -- `query_for(spec)` -> `fetch_shopping_comps` -> `live_baseline` -- into
+real market comps, **falling back to the bootstrap table when comps are thin (<5) OR the fetch fails**
+(SerpApiError / httpx errors caught -> bootstrap; never crashes the pass). Caches by query within a
+pass (one fetch per distinct spec).
+
+- CLI uses the live resolver when `QM_SERPAPI_API_KEY` is set, else bootstrap (logged as the
+  `baseline` mode); the key is read once + bound into the fetch closure.
+- This is what **unlocks APPROVE-eligible** items: bootstrap (cold-start) keeps everything ALERT; a
+  LIVE baseline + EU + EUR + fresh FX -> APPROVE_ELIGIBLE. Demo verified (live EUR 150 ref -> two
+  APPROVE rows ranked by deal%).
+- 4 tests (live comps -> LIVE; thin -> bootstrap; SerpApi error -> bootstrap; cache = 1 fetch/query).
+  149 pass; ruff/mypy-strict/bandit clean.
+- REMAINING Phase-1: P1.3c the Gmail one-label reader (feeds RawListings; needs the access-method
+  decision), healthchecks ping, golden set.
+
 ## 2026-06-28 -- P1.4b: assemble() + CLI -- runnable end-to-end
 
 `pipeline.py` + `__main__.py` make the funnel runnable. `assemble(extracted, *, profile, fx,
