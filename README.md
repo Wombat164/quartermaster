@@ -68,7 +68,7 @@ docs/
   background/
     ram-upgrade-guide.md        why this exists (the RAM the agent hunts)
     price-comparison-tools.md   price-API / MCP landscape research
-PROMPT-FOR-RCDE.md              kickoff prompt for the implementing agent
+KICKOFF.md                      kickoff prompt for the implementing agent
 ```
 
 ## How to start

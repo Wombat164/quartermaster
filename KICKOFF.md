@@ -1,4 +1,4 @@
-# Kickoff prompt for the implementing agent (rcde / Claude Code)
+# Kickoff prompt for the implementing agent
 
 Copy-paste the block below into a fresh Claude Code session to begin implementation.
 
@@ -7,7 +7,7 @@ Copy-paste the block below into a fresh Claude Code session to begin implementat
 ```
 Retrieve and start implementing my "quartermaster" project.
 
-1. Clone the private repo and open it:
+1. Clone the repo and open it:
    gh repo clone Wombat164/quartermaster
    cd quartermaster
 
