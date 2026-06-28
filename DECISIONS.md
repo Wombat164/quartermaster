@@ -3,6 +3,23 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-28 -- Golden set: the v1 CI quality gate (53 labeled cases)
+
+`tests/test_golden.py` -- a labeled corpus asserted against the funnel so extraction, fitment, and
+the safety boundaries can't silently regress (plan sec.7/sec.9 v1 gate). 53 cases:
+
+- fitment (26): happy / wrong-gen / wrong-form / oversized / too-many / buffered / ECC -> UNVERIFIED /
+  1.35V -> PASS+note / unknown-critical -> UNVERIFIED / non-positive -> REJECT.
+- extraction (16): structured + spaced kits, single sticks, DDR3/4/5, the desktop-UDIMM mislabel,
+  RDIMM, and price formats incl. the "DDR4 EUR 80" not-glued-digit trap + EU/US separators.
+- injection (8): each body the guard must flag -> the funnel returns LOW confidence + deterministic-
+  only (never silently trusts an injected listing).
+- source-leak (3): only CLASSIFIEDS_EMAIL is LLM-eligible; SERPAPI / EBAY raise `LlmBoundaryViolation`.
+- a meta-test keeps the corpus >= 50.
+
+209 tests pass; ruff/mypy-strict/bandit clean. The injection corpus is the deterministic seed; live-
+LLM-extraction injection cases grow it when a live LLM run is wired.
+
 ## 2026-06-28 -- OSS-adoptability: provider-agnostic email input (reverses Gmail-API-as-core)
 
 Red-team (2 agents: adoptability audit + prior-art research) found the Gmail-API input undermined the
