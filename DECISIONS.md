@@ -3,6 +3,34 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-28 -- External gap + security audit (public repo, from the outside)
+
+Two adversarial reviews from a fresh public clone + GitHub/PyPI/Pages recon. CORE security posture
+verified SOUND: gitleaks clean over all history, pip-audit clean (base+dev+gmail, no CVEs), all 7
+Actions SHA-pinned, uv.lock hash-pinned, no workflow-injection, egress/DRY_RUN/SecretStr/LLM-boundary
+claims all hold. Findings + fixes (this commit):
+
+- **Dependency-confusion (headline):** the README told adopters `pip install quartermaster`, but PyPI
+  `quartermaster` is an unrelated dormant 2017 package -> they'd install a stranger's code. Fixed:
+  README installs from git (`uvx` / `uv tool install` / `pipx` / `pip install git+...`), states Python
+  3.13+, warns off the PyPI name.
+- **Zero-setup overstated:** no sample shipped, so the Quickstart produced nothing. Added
+  `examples/sample-alert.eml`; the Quickstart points at it (verified -> a 1-row digest).
+- **README lower half** read as "go build v0 / resolve Gate 0" (contradicting "runnable, tested"):
+  replaced with a Development section; Tech blurb corrected to the ACTUAL stack (dropped keyring /
+  tenacity / numpy / scipy / vcrpy / ... that aren't used); added a CI badge + "personal project" note;
+  removed `KICKOFF.md` (internal agent-scaffolding clutter) from the public root.
+- **SECURITY.md overclaim fixed:** dropped "free of personal data" (git commit metadata carries the
+  author email).
+- **docs.yml least-privilege:** `id-token: write` scoped to the deploy job only.
+- Added `CONTRIBUTING.md`; set repo topics; de-named the `rcde` codename at HEAD.
+- 212 tests still pass; ruff/mypy-strict/bandit clean.
+
+**DEFERRED (operator calls, surfaced not done):** publish to PyPI under an owned name (vs the git
+install); cut a `v0.1.0` tag + Release; set a social-preview image; merge the open Dependabot PRs; a
+git-history rewrite to remove the author email + the `rcde` codename from past commits (it remains in
+history -- the email is already public, so weigh the force-push cost).
+
 ## 2026-06-28 -- Final pass: healthchecks ping, security docs, Action SHA-pins, codename scrub
 
 Tidy-up (the remaining Phase-1 plumbing + red-team follow-ons):
@@ -14,8 +42,8 @@ Tidy-up (the remaining Phase-1 plumbing + red-team follow-ons):
   7-day restricted-scope caveat).
 - **GitHub Actions pinned to commit SHAs** (`ci.yml` + `docs.yml`, version in a comment): a moving tag
   can't be repointed to malicious code. Dependabot bumps them.
-- **Scrubbed the `rcde` codename**: `PROMPT-FOR-RCDE.md` -> `KICKOFF.md`, title de-codenamed, "private"
-  -> public; README updated. (History drafts keep their archival mentions.)
+- **Scrubbed an internal codename** from the kickoff prompt (renamed it to `KICKOFF.md`, de-codenamed
+  its title); "private" -> public; README updated. (Git history retains the prior names.)
 - 212 tests pass; ruff/mypy-strict/bandit clean.
 
 **Phase-1 is feature-complete:** provider-agnostic input -> ingest (regex + guard + LLM cross-val) ->
@@ -346,7 +374,7 @@ Smaller deferred (documented, not yet fixed): landed-cost completeness flag (cus
 E[DOA] are an additive under-estimate -> inflates deal% cross-border; force ALERT until modelled);
 `create_snipe` reserve-before-idempotency-insert (add SAVEPOINT + regression test); `Snipe.budget_id`
 scoping for `reconcile`; VCR cassette redaction (before vcrpy lands); pin Actions to commit SHAs;
-mid-lifecycle FSM timeout edges; 1.35V SO-DIMM -> RISK; PROMPT-FOR-RCDE.md "rcde" codename (scrub vs
+mid-lifecycle FSM timeout edges; 1.35V SO-DIMM -> RISK; the kickoff-prompt codename (scrub vs
 remove -- operator call).
 
 ## 2026-06-27 -- P1.2a: valuation money core (EUR/USD/GBP first-class)

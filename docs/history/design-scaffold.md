@@ -1,5 +1,5 @@
 # Deal-Hunter + Auto-Bid Agent — Design Scaffold
-**Goal:** find the best *value-for-fit* used/new RAM (and later: any hardware) across EU marketplaces, rank it, and bid/buy within a budget — compatibility-aware. **Date:** 2026-06-24. Status: design only (rcde to implement/iterate).
+**Goal:** find the best *value-for-fit* used/new RAM (and later: any hardware) across EU marketplaces, rank it, and bid/buy within a budget — compatibility-aware. **Date:** 2026-06-24. Status: design only (to implement/iterate).
 
 ---
 
