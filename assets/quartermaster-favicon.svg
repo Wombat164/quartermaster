@@ -4,14 +4,18 @@
       <stop offset="0" stop-color="#3A4A29"/>
       <stop offset="1" stop-color="#121A0B"/>
     </radialGradient>
-    <linearGradient id="br" gradientUnits="userSpaceOnUse" x1="256" y1="100" x2="256" y2="412">
+    <linearGradient id="br" gradientUnits="userSpaceOnUse" x1="256" y1="78" x2="256" y2="430">
       <stop offset="0" stop-color="#F1CF73"/>
       <stop offset=".55" stop-color="#CF9E37"/>
       <stop offset="1" stop-color="#A8761C"/>
     </linearGradient>
   </defs>
-  <!-- Small-size variant: the star-punched quarter only -->
   <rect x="0" y="0" width="512" height="512" rx="104" fill="url(#fld)"/>
-  <circle cx="256" cy="256" r="152" fill="url(#br)" stroke="#714e0d" stroke-width="6" stroke-opacity=".35"/>
-  <path fill="url(#fld)" d="M256 160 L279.5 223.64 L347.3 226.34 L294.04 268.36 L312.42 333.66 L256 296 L199.58 333.66 L217.96 268.36 L164.7 226.34 L232.5 223.64 Z"/>
+  <!-- bold key silhouette for small sizes: big star-coin bow + short thick shank + chunky teeth -->
+  <g fill="url(#br)">
+    <path fill-rule="evenodd" d="M138 196 a118 118 0 1 0 236 0 a118 118 0 1 0 -236 0 Z
+      M256 134 L271.64 174.48 L314.96 176.84 L281.30 204.22 L292.45 246.16 L256 222.6 L219.55 246.16 L230.70 204.22 L197.04 176.84 L240.36 174.48 Z"/>
+    <rect x="228" y="300" width="56" height="122" rx="20"/>
+    <path d="M256 360 L368 360 L368 390 L312 390 L312 422 L256 422 Z"/>
+  </g>
 </svg>

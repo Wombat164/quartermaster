@@ -6,10 +6,10 @@
 ## Logo files
 | File | Use |
 |---|---|
-| `quartermaster-key.svg` | **Primary mark.** A key whose bow is a reeded quarter with a star punched through; the bit's teeth ascend left→right (climbing value). One object = coin (quarter) + military (star) + control-of-stores (key). |
-| `quartermaster-lockup.svg` | Horizontal lockup — mark + ledger-column rule + slab wordmark + tagline. |
-| `quartermaster-mark-mono.svg` | Single-colour, transparent (stamps, watermarks; recolour via the group `fill`). |
-| `quartermaster-favicon.svg` | Simplified to the star-punched quarter for small sizes (≤24 px). |
+| `quartermaster-key.svg` | **Primary mark.** A key whose bow is a struck quarter (clean coin disc) with a star knocked through; the bit's teeth ascend left→right (climbing value). One object = coin (quarter) + military (star) + control-of-stores (key). The mono is the master geometry; the colour key derives from it. |
+| `quartermaster-lockup.svg` | Horizontal lockup — de-boxed mark + ledger-column rule + **outlined** slab wordmark + tagline (no live fonts). |
+| `quartermaster-mark-mono.svg` | **Master geometry.** Single-colour, transparent (stamps, watermarks; recolour via the group `fill`). |
+| `quartermaster-favicon.svg` | A bold key silhouette tuned for small sizes (≤24 px) — keeps the key identity rather than collapsing to a generic star. |
 | `quartermaster-social.png` | 1280×640 GitHub social-preview card (lockup on the depot field). |
 
 ## Palette
