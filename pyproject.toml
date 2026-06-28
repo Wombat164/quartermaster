@@ -1,6 +1,6 @@
 [project]
 name = "quartermaster"
-version = "0.0.0"
+version = "0.1.0"
 description = "Personal value-for-fit RAM acquisition agent (ranked digest + human-approved Gixen snipe)."
 readme = "README.md"
 requires-python = ">=3.13"
