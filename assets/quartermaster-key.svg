@@ -18,7 +18,6 @@
   <!-- bow = reeded quarter with a star punched through -->
   <circle cx="256" cy="168" r="80" fill="url(#br)"/>
   <circle cx="256" cy="168" r="73" fill="none" stroke="#714e0d" stroke-width="9" stroke-dasharray="3 11.4" opacity=".5"/>
-  <circle cx="256" cy="168" r="61" fill="none" stroke="#714e0d" stroke-width="2.5" opacity=".4"/>
   <path fill="url(#fld)" d="M256 126 L266.58 153.44 L295.94 155.02 L273.12 173.56 L280.69 201.98 L256 186 L231.31 201.98 L238.88 173.56 L216.06 155.02 L245.42 153.44 Z"/>
 
   <!-- collar, shank, ASCENDING toothed bit (value climbs to the right) -->

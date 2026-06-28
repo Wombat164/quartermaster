@@ -10,6 +10,7 @@
 | `quartermaster-lockup.svg` | Horizontal lockup — mark + ledger-column rule + slab wordmark + tagline. |
 | `quartermaster-mark-mono.svg` | Single-colour, transparent (stamps, watermarks; recolour via the group `fill`). |
 | `quartermaster-favicon.svg` | Simplified to the star-punched quarter for small sizes (≤24 px). |
+| `quartermaster-social.png` | 1280×640 GitHub social-preview card (lockup on the depot field). |
 
 ## Palette
 | Token | Hex | Use |
@@ -27,7 +28,7 @@ The palette is deliberately **olive-drab + struck brass** — the quartermaster'
 ## Typography
 - **Wordmark:** slab serif for a ledger/requisition feel — `Zilla Slab` 600, falling back to `Roboto Slab` / `Rockwell` / `Georgia`; tracked +2.
 - **Tagline / utility:** `Inter` (→ `system-ui`), small caps, tracked +7.
-- ⚠️ The lockup uses live `<text>`; for pixel-identical rendering everywhere, **outline the wordmark to vector paths** (or embed the font) once the typeface is locked.
+- The lockup wordmark + tagline are **outlined to vector paths** (Zilla Slab 600 / Inter 500), so they render identically everywhere with no font dependency. Re-outline from the TTFs if the text changes.
 
 ## Usage
 - Clear space around the mark ≈ the height of the star-bow.

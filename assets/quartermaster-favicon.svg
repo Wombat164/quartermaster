@@ -12,7 +12,6 @@
   </defs>
   <!-- Small-size variant: the star-punched quarter only -->
   <rect x="0" y="0" width="512" height="512" rx="104" fill="url(#fld)"/>
-  <circle cx="256" cy="256" r="152" fill="url(#br)"/>
-  <circle cx="256" cy="256" r="152" fill="none" stroke="#714e0d" stroke-width="6" opacity=".35"/>
+  <circle cx="256" cy="256" r="152" fill="url(#br)" stroke="#714e0d" stroke-width="6" stroke-opacity=".35"/>
   <path fill="url(#fld)" d="M256 160 L279.5 223.64 L347.3 226.34 L294.04 268.36 L312.42 333.66 L256 296 L199.58 333.66 L217.96 268.36 L164.7 226.34 L232.5 223.64 Z"/>
 </svg>
