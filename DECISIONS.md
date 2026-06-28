@@ -3,6 +3,22 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-28 -- P1.3c: Gmail one-label reader (read-only OAuth)
+
+Operator chose the **Gmail API (read-only OAuth)** over IMAP. `gmail.py`, same two-layer shape as the
+other adapters:
+
+- PURE core (`message_to_raw`, `read_messages`): a Gmail message resource (dict) -> `RawListing`
+  (plaintext body; text/plain preferred, else stripped text/html; subject -> title; first link -> url).
+  base64url-decoded, malformed-message-safe. 5 tests, no API.
+- WIRING (`load_credentials`, `read_label`): scope `gmail.readonly`; loads/refreshes the token or runs
+  the InstalledApp consent flow on first run; lists + gets messages under one label -> RawListings.
+  OAuth client secret + token live under `data/` (gitignored), never committed. Not CI-tested (needs
+  real Google credentials); the google libs are lazy-imported + mypy-overridden (untyped SDK boundary).
+- Adds google-api-python-client + google-auth-oauthlib. 154 pass; ruff/mypy-strict/bandit clean.
+- NEXT: wire it into the CLI (config: label + token/secret paths) so a run reads the alert label; then
+  the healthchecks ping + the golden set.
+
 ## 2026-06-28 -- P1.4c: SerpApi live-baseline resolver (real comps -> APPROVE-eligible)
 
 `pipeline.make_baseline_resolver(fetch, fx, fallback=bootstrap_baseline)` returns a `BaselineResolver`
