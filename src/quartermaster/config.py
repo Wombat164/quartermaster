@@ -18,7 +18,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Literal, get_args
 
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ENV_PREFIX = "QM_"
@@ -77,6 +77,20 @@ class Settings(BaseSettings):
     imap_password: SecretStr | None = Field(
         default=None, description="IMAP app-password (from your secret store; never committed)."
     )
+
+    @field_validator(
+        "serpapi_api_key",
+        "anthropic_api_key",
+        "healthchecks_ping_url",
+        "imap_password",
+        mode="before",
+    )
+    @classmethod
+    def _blank_secret_is_none(cls, v: object) -> object:
+        """Empty / whitespace env value means 'unset' -- never a blank SecretStr to an API."""
+        if isinstance(v, str) and not v.strip():
+            return None
+        return v
 
 
 def _is_secret(annotation: object) -> bool:

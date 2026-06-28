@@ -6,7 +6,9 @@ from __future__ import annotations
 import datetime as dt
 from decimal import Decimal
 
-from quartermaster.fx import ecb_fx_rates
+from currency_converter import CurrencyConverter
+
+from quartermaster.fx import ecb_fx_rates, live_ecb_converter
 from quartermaster.valuation import Currency, FxRates
 
 
@@ -25,3 +27,8 @@ def test_snapshot_age() -> None:
     assert snap.age_days(snap.as_of) == 0
     assert snap.age_days(snap.as_of + dt.timedelta(days=5)) == 5
     assert snap.age_days(snap.as_of - dt.timedelta(days=3)) == 0  # clock skew clamps to 0
+
+
+def test_live_ecb_converter_falls_back_when_offline() -> None:
+    # the autouse egress blocker fails the download -> bundled fallback, never crashes
+    assert isinstance(live_ecb_converter(), CurrencyConverter)
