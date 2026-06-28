@@ -23,6 +23,7 @@ of personal data.)
   ```sh
   export QM_SERPAPI_API_KEY="$(bw get password serpapi)"
   export QM_ANTHROPIC_API_KEY="$(bw get password anthropic)"
+  export QM_IMAP_PASSWORD="$(bw get password mail-app-password)"   # only for the imap source
   ```
 
 - **Fail-safe by default:** `QM_DRY_RUN` defaults to **true** -- the agent never takes a real
@@ -36,6 +37,12 @@ of personal data.)
 - **Untrusted input stays data, never instructions.** Classifieds/email content is treated as
   data; eBay content is processed deterministically and never sent to an LLM. See
   `docs/plan-final.md` (sec.2/sec.4).
+- **Email-input credentials are yours, kept out of the repo.** The default `file`/`stdin` sources
+  need none. IMAP uses an app-password (`QM_IMAP_PASSWORD`, from your secret store) -- that credential
+  is full-mailbox scope, so prefer a dedicated forwarding account. The optional Gmail-API backend
+  caches an OAuth token at `data/gmail_token.json` (gitignored, a LIVE credential -- revoke at
+  myaccount.google.com); its `gmail.readonly` is a Google "restricted" scope whose unverified-app
+  refresh token expires ~weekly, which is why IMAP + an app-password is the recommended live path.
 
 ## Scope / no warranty
 

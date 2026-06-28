@@ -3,6 +3,25 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-28 -- Final pass: healthchecks ping, security docs, Action SHA-pins, codename scrub
+
+Tidy-up (the remaining Phase-1 plumbing + red-team follow-ons):
+
+- **healthchecks.io ping** (`health.py`): best-effort GET to `QM_HEALTHCHECKS_PING_URL` at the end of
+  a successful run (a dead-man's-switch for scheduled runs); never raises. Wired into the CLI. 3 tests.
+- **SECURITY.md**: documented email-input credentials -- IMAP app-password (full-mailbox scope -> use a
+  dedicated account) + the Gmail OAuth token (live credential under `data/`, revoke via Google; the
+  7-day restricted-scope caveat).
+- **GitHub Actions pinned to commit SHAs** (`ci.yml` + `docs.yml`, version in a comment): a moving tag
+  can't be repointed to malicious code. Dependabot bumps them.
+- **Scrubbed the `rcde` codename**: `PROMPT-FOR-RCDE.md` -> `KICKOFF.md`, title de-codenamed, "private"
+  -> public; README updated. (History drafts keep their archival mentions.)
+- 212 tests pass; ruff/mypy-strict/bandit clean.
+
+**Phase-1 is feature-complete:** provider-agnostic input -> ingest (regex + guard + LLM cross-val) ->
+fitment -> valuation (landed / ECB-FX / live+bootstrap baseline) -> deal% -> surface -> ranked digest,
+runnable end-to-end, gated by the golden set. Remaining is Phase-2 (bidding) + ops (a scheduler).
+
 ## 2026-06-28 -- Golden set: the v1 CI quality gate (53 labeled cases)
 
 `tests/test_golden.py` -- a labeled corpus asserted against the funnel so extraction, fitment, and

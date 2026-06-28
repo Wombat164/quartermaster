@@ -16,7 +16,7 @@ import datetime as dt
 import sys
 from pathlib import Path
 
-from . import mail
+from . import health, mail
 from .config import Settings
 from .digest import render_digest
 from .fitment import G513QR
@@ -114,6 +114,11 @@ def main(argv: list[str] | None = None) -> int:
         source=ListingSource.CLASSIFIEDS_EMAIL,
     )
     print(render_digest(items, dry_run=settings.dry_run, fx_age_days=fx.age_days(today)))
+
+    if settings.healthchecks_ping_url is not None:
+        log.info(
+            "healthcheck", pinged=health.ping(settings.healthchecks_ping_url.get_secret_value())
+        )
     return 0
 
 
