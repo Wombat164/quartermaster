@@ -3,6 +3,18 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-28 -- PyPI packaging: dist name `qmaster` + Trusted Publishing
+
+`quartermaster` is taken on PyPI (the unrelated 2017 package), so the DISTRIBUTION name is `qmaster`
+(`pip install qmaster`). The import package stays `quartermaster`; both `quartermaster` and a new
+`qmaster` CLI alias point at the same entry point. Publishing uses **Trusted Publishing (OIDC)** via
+`.github/workflows/release.yml` -- NO API token stored anywhere (matches the no-secrets ethos): a PyPI
+pending-publisher trusts the repo's release workflow, which `uv build`s + `uv publish
+--trusted-publishing always` on a published Release or manual dispatch (`environment: pypi`,
+`id-token: write`). pyproject gained authors (`Wombat164`, no email), urls, keywords, classifiers, and a
+PEP-639 license; `uv build` + `twine check` both pass. The README `pip install` line flips to `qmaster`
+only AFTER the first publish lands (so it never points at a package that isn't live).
+
 ## 2026-06-28 -- Cleared the deferred audit items (Dependabot, v0.1.0, history rewrite)
 
 Operator-authorized the items the external audit had deferred:

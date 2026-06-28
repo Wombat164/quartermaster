@@ -1,0 +1,29 @@
+name: release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Publishes to PyPI via Trusted Publishing (OIDC) -- NO API token is stored anywhere.
+# One-time setup (PyPI UI): add a "pending publisher" with
+#   project = qmaster | owner = Wombat164 | repo = quartermaster | workflow = release.yml | environment = pypi
+# Trigger: publish a GitHub Release (auto), or run this workflow manually (workflow_dispatch).
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write # mint the short-lived OIDC token Trusted Publishing exchanges for an upload
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+        with:
+          python-version: "3.13"
+      - name: Build sdist + wheel
+        run: uv build
+      - name: Publish to PyPI (Trusted Publishing, no token)
+        run: uv publish --trusted-publishing always

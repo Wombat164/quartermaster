@@ -1,10 +1,21 @@
 [project]
-name = "quartermaster"
+name = "qmaster"
 version = "0.1.0"
-description = "Personal value-for-fit RAM acquisition agent (ranked digest + human-approved Gixen snipe)."
+description = "Personal value-for-fit hardware deal-hunter: filters, values, and ranks classifieds/retail listings into a digest (search + compare; human-approved bidding is a later phase)."
 readme = "README.md"
 requires-python = ">=3.13"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Wombat164" }]
+keywords = ["ram", "deal-finder", "price-comparison", "classifieds", "cli", "agent", "hardware"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: End Users/Desktop",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Utilities",
+]
 # Runtime deps are added per functional block as v1 lands (plan sec.6). v0 is
 # foundation only: no bidding / LLM / eBay / SPD-DB. The schema core (increment 2)
 # needs only the persistence layer.
@@ -41,8 +52,15 @@ gmail = [
   "google-auth-oauthlib>=1.4.0",
 ]
 
+[project.urls]
+Homepage = "https://wombat164.github.io/quartermaster/"
+Repository = "https://github.com/Wombat164/quartermaster"
+Issues = "https://github.com/Wombat164/quartermaster/issues"
+
+# Dist name is `qmaster` (the import package + both CLI commands stay `quartermaster`/`qmaster`).
 [project.scripts]
 quartermaster = "quartermaster.__main__:main"
+qmaster = "quartermaster.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
