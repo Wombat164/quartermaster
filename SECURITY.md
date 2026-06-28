@@ -6,8 +6,8 @@ report issues.
 ## Reporting a vulnerability
 
 Please report privately via GitHub's **"Report a vulnerability"** (Security advisories) on
-this repository, not a public issue. (No contact email is published, to keep the repo free
-of personal data.)
+this repository, rather than a public issue. (No contact address is published in the repo
+content; note that git commit metadata still carries the author's address.)
 
 ## Security model
 
