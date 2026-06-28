@@ -14,20 +14,24 @@ A personal agent that **finds the best value-for-fit RAM** (and later: any fitme
 
 ## Quickstart
 
-Requires **Python 3.13+**. It is **not on PyPI** -- install from this repo. (The unrelated `quartermaster` package on PyPI is *not* this project; don't `pip install quartermaster`.)
+Requires **Python 3.13+**. Install from PyPI -- the package is **`qmaster`** (the bare `quartermaster` name on PyPI is an unrelated project):
 
 ```sh
-# zero-install run (uv fetches Python 3.13 for you) against the bundled sample:
-uvx --from git+https://github.com/Wombat164/quartermaster.git quartermaster examples/sample-alert.eml
+pip install qmaster        # or: uv tool install qmaster
 
-# or put the CLI on PATH:
-uv tool install git+https://github.com/Wombat164/quartermaster.git
-quartermaster examples/sample-alert.eml              # bundled sample  ->  a ranked digest
-quartermaster path/to/your/alerts/*.eml              # your own .eml / .txt files
-cat alert.eml | QM_MAIL_SOURCE=stdin quartermaster   # or pipe one in
+# try it on an inline sample listing (no files needed):
+printf 'Subject: RAM\n\nCorsair 2x16GB DDR4-3200 SO-DIMM, EUR 50\nhttps://example.com/x\n' \
+  | QM_MAIL_SOURCE=stdin qmaster
+
+qmaster path/to/your/alerts/*.eml            # then point it at your own .eml / .txt alerts
 ```
 
-(`pipx install --python 3.13 git+...`, or `pip install git+https://github.com/Wombat164/quartermaster.git` inside a 3.13 venv, also work.)
+From source instead (this also gives you the bundled `examples/sample-alert.eml`):
+
+```sh
+uv tool install git+https://github.com/Wombat164/quartermaster.git   # or: uvx --from git+...
+qmaster examples/sample-alert.eml
+```
 
 Runs alert-only with **zero accounts or keys** (deterministic regex extraction + a bootstrap price table). Opt in to more, each independent and off by default:
 
@@ -36,7 +40,7 @@ Runs alert-only with **zero accounts or keys** (deterministic regex extraction +
 | LLM extraction (messy free-text listings) | `QM_ANTHROPIC_API_KEY` | Claude extraction (else regex-only) |
 | Live market comps (real deal %) | `QM_SERPAPI_API_KEY` | SerpApi baseline (else a bootstrap table) |
 | Live email from **any** provider | `QM_MAIL_SOURCE=imap` + `QM_IMAP_*` + an app-password | stdlib IMAP -- Gmail / Outlook / Fastmail / Proton / self-hosted |
-| Gmail via OAuth (rarely needed) | the `[gmail]` extra (`uv tool install "quartermaster[gmail] @ git+https://github.com/Wombat164/quartermaster.git"`) + `QM_MAIL_SOURCE=gmail` | the Gmail API ([caveats](SECURITY.md) -- 7-day token, full-mailbox scope) |
+| Gmail via OAuth (rarely needed) | `pip install "qmaster[gmail]"` + `QM_MAIL_SOURCE=gmail` | the Gmail API ([caveats](SECURITY.md) -- 7-day token, full-mailbox scope) |
 
 Secrets come from your env / secret store (e.g. `export QM_SERPAPI_API_KEY=$(bw get password serpapi)`), never committed; `QM_DRY_RUN` defaults **true**. Copy [`.env.example`](.env.example) to `.env` to configure.
 

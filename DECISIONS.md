@@ -15,6 +15,12 @@ pending-publisher trusts the repo's release workflow, which `uv build`s + `uv pu
 PEP-639 license; `uv build` + `twine check` both pass. The README `pip install` line flips to `qmaster`
 only AFTER the first publish lands (so it never points at a package that isn't live).
 
+**Published 2026-06-28** (manual workflow dispatch, OIDC, no token) -- `qmaster 0.1.0` (wheel + sdist)
+live at <https://pypi.org/project/qmaster/>; README + opt-in table flipped to `pip install qmaster`.
+The pip path's Quickstart uses an inline stdin demo (the bundled `examples/sample-alert.eml` ships only
+in the git tree, not the wheel); the from-source path keeps the sample command. Future GitHub Releases
+auto-publish via the same workflow.
+
 ## 2026-06-28 -- Cleared the deferred audit items (Dependabot, v0.1.0, history rewrite)
 
 Operator-authorized the items the external audit had deferred:
