@@ -16,7 +16,7 @@ two never drift (the plan's "can't diverge" mechanism, sec.9).
 from __future__ import annotations
 
 from pathlib import Path
-from typing import get_args
+from typing import Literal, get_args
 
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -43,6 +43,27 @@ class Settings(BaseSettings):
         default="INFO", description="structlog level (DEBUG/INFO/WARNING/ERROR)."
     )
 
+    # --- email input (provider-agnostic; default = local files, needs no account or deps) ---
+    mail_source: Literal["file", "stdin", "mbox", "imap", "gmail"] = Field(
+        default="file", description="Listing source: file | stdin | mbox | imap | gmail."
+    )
+    mail_path: Path = Field(
+        default=Path("data/alerts"),
+        description="file/mbox source: a dir of .eml/.txt, or an .mbox file.",
+    )
+    imap_host: str = Field(default="", description="IMAP host, e.g. imap.gmail.com (imap source).")
+    imap_port: int = Field(default=993, description="IMAP SSL port.")
+    imap_user: str = Field(default="", description="IMAP username / email address.")
+    imap_folder: str = Field(default="INBOX", description="IMAP folder/label to read.")
+    gmail_label: str = Field(default="", description="Gmail label to read (gmail source).")
+    gmail_token_path: Path = Field(
+        default=Path("data/gmail_token.json"), description="Gmail OAuth token cache (gitignored)."
+    )
+    gmail_client_secret_path: Path = Field(
+        default=Path("data/gmail_client_secret.json"),
+        description="Gmail OAuth client secret (gitignored).",
+    )
+
     # --- secrets (injected from your secret store via env; never committed or logged) ---
     serpapi_api_key: SecretStr | None = Field(
         default=None, description="SerpApi key (Phase-1 Google-Shopping price baseline)."
@@ -52,6 +73,9 @@ class Settings(BaseSettings):
     )
     healthchecks_ping_url: SecretStr | None = Field(
         default=None, description="healthchecks.io dead-man's-switch ping URL."
+    )
+    imap_password: SecretStr | None = Field(
+        default=None, description="IMAP app-password (from your secret store; never committed)."
     )
 
 
@@ -75,7 +99,14 @@ def render_env_example() -> str:
             lines.append(f"{env}=")
         else:
             default = field.default
-            value = "true" if default is True else "false" if default is False else str(default)
+            if isinstance(default, Path):
+                value = default.as_posix()  # forward slashes -> stable across OSes (no drift)
+            elif default is True:
+                value = "true"
+            elif default is False:
+                value = "false"
+            else:
+                value = str(default)
             lines.append(f"{env}={value}")
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"

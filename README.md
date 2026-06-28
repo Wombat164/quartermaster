@@ -8,7 +8,26 @@ A personal agent that **finds the best value-for-fit RAM** (and later: any fitme
 
 **Docs site:** <https://wombat164.github.io/quartermaster/> · Brand assets, palette & fonts: [`assets/BRAND.md`](assets/BRAND.md) · candidate domain **quartermaster.bid**.
 
-> **Status (2026-06-27):** **Public + MIT.** v0 foundation + **P1.1 fitment core** shipped (toolchain, money/safety schema core, CI + egress blocker, the deterministic compatibility gate). **Phase 1 = SEARCH + COMPARE first**; bid/buy is Phase 2 (Gate 0: eBay API dropped). See [`DECISIONS.md`](DECISIONS.md).
+> **Status (2026-06-28):** **Public + MIT.** Phase-1 pipeline runnable end-to-end (fitment -> valuation/ECB-FX -> live/bootstrap baseline -> deal% -> ranked digest), with provider-agnostic email input (file / stdin / IMAP; Gmail optional). 155 tests green. **Phase 1 = SEARCH + COMPARE**; bid/buy is Phase 2 (Gate 0: eBay API dropped). See [`DECISIONS.md`](DECISIONS.md).
+
+## Quickstart
+
+```sh
+pip install quartermaster                 # core: stdlib email input, no accounts, no API keys
+quartermaster path/to/alerts/*.eml        # or a dir of .eml/.txt  ->  a ranked digest
+cat alert.eml | QM_MAIL_SOURCE=stdin quartermaster   # or pipe one in
+```
+
+Runs alert-only with **zero setup** (deterministic regex extraction + a bootstrap price table). Opt in to more, each independent and off by default:
+
+| Want | Set | Adds |
+|---|---|---|
+| LLM extraction (messy free-text listings) | `QM_ANTHROPIC_API_KEY` | Claude extraction (else regex-only) |
+| Live market comps (real deal %) | `QM_SERPAPI_API_KEY` | SerpApi baseline (else a bootstrap table) |
+| Live email from **any** provider | `QM_MAIL_SOURCE=imap` + `QM_IMAP_*` + an app-password | stdlib IMAP -- Gmail / Outlook / Fastmail / Proton / self-hosted |
+| Gmail via OAuth (rarely needed) | `pip install quartermaster[gmail]` + `QM_MAIL_SOURCE=gmail` | the Gmail API ([caveats](SECURITY.md) -- 7-day token, full-mailbox scope) |
+
+Secrets come from your env / secret store (e.g. `export QM_SERPAPI_API_KEY=$(bw get password serpapi)`), never committed; `QM_DRY_RUN` defaults **true**. Copy [`.env.example`](.env.example) to `.env` to configure.
 
 ---
 

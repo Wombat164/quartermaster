@@ -1552,8 +1552,6 @@ dependencies = [
     { name = "alembic" },
     { name = "anthropic" },
     { name = "currencyconverter" },
-    { name = "google-api-python-client" },
-    { name = "google-auth-oauthlib" },
     { name = "httpx" },
     { name = "pydantic-settings" },
     { name = "sqlalchemy" },
@@ -1576,6 +1574,10 @@ dev = [
 docs = [
     { name = "mkdocs-material" },
 ]
+gmail = [
+    { name = "google-api-python-client" },
+    { name = "google-auth-oauthlib" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -1583,8 +1585,8 @@ requires-dist = [
     { name = "anthropic", specifier = ">=0.112.0" },
     { name = "bandit", marker = "extra == 'dev'", specifier = ">=1.7" },
     { name = "currencyconverter", specifier = ">=0.18.19" },
-    { name = "google-api-python-client", specifier = ">=2.198.0" },
-    { name = "google-auth-oauthlib", specifier = ">=1.4.0" },
+    { name = "google-api-python-client", marker = "extra == 'gmail'", specifier = ">=2.198.0" },
+    { name = "google-auth-oauthlib", marker = "extra == 'gmail'", specifier = ">=1.4.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6" },
     { name = "mkdocs-material", marker = "extra == 'docs'", specifier = ">=9.7.6" },
@@ -1600,7 +1602,7 @@ requires-dist = [
     { name = "sqlalchemy", specifier = ">=2.0" },
     { name = "structlog", specifier = ">=26.1.0" },
 ]
-provides-extras = ["dev", "docs"]
+provides-extras = ["dev", "docs", "gmail"]
 
 [[package]]
 name = "requests"
