@@ -19,8 +19,10 @@ from .fx import ecb_fx_rates
 from .listings import ListingSource
 from .llm import anthropic_extractor
 from .logging import configure_logging, get_logger
-from .pipeline import RawListing, null_extractor, run_pass
+from .pipeline import BaselineResolver, RawListing, make_baseline_resolver, null_extractor, run_pass
 from .ram import bootstrap_baseline
+from .serpapi import fetch_shopping_comps
+from .valuation import Comp
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -40,11 +42,26 @@ def main(argv: list[str] | None = None) -> int:
 
     key = settings.anthropic_api_key
     llm = anthropic_extractor(api_key=key.get_secret_value()) if key is not None else null_extractor
+
+    baseline_for: BaselineResolver
+    serp = settings.serpapi_api_key
+    if serp is not None:
+        serp_key = serp.get_secret_value()
+
+        def _fetch(query: str) -> list[Comp]:
+            return fetch_shopping_comps(query, api_key=serp_key)
+
+        baseline_for = make_baseline_resolver(fetch=_fetch, fx=fx.rates)
+        baseline_mode = "serpapi+bootstrap"
+    else:
+        baseline_for = bootstrap_baseline
+        baseline_mode = "bootstrap"
+
     log.info(
         "ingest pass",
         listings=len(raws),
         extractor="anthropic" if key is not None else "deterministic-only",
-        baseline="bootstrap",
+        baseline=baseline_mode,
     )
 
     items = run_pass(
@@ -52,7 +69,7 @@ def main(argv: list[str] | None = None) -> int:
         llm=llm,
         profile=G513QR,
         fx=fx,
-        baseline_for=bootstrap_baseline,
+        baseline_for=baseline_for,
         today=today,
         source=ListingSource.CLASSIFIEDS_EMAIL,
     )

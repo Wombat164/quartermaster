@@ -13,13 +13,17 @@ import datetime as dt
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 
+import httpx
+
 from .digest import DigestItem
 from .evaluation import evaluate
 from .fitment import FitmentProfile, RamSpec, assess
 from .fx import FxSnapshot
 from .ingest import ExtractedListing, LlmExtraction, LlmExtractor, extract_listing
 from .listings import ListingSource
-from .valuation import Baseline, Currency, LandedCost
+from .ram import bootstrap_baseline, query_for
+from .serpapi import SerpApiError
+from .valuation import Baseline, Comp, Currency, FxRates, LandedCost, live_baseline
 
 # How to get a market reference for a spec (live SerpApi comps, or the bootstrap table).
 BaselineResolver = Callable[[RamSpec], Baseline | None]
@@ -93,3 +97,27 @@ def run_pass(
         if item is not None:
             items.append(item)
     return items
+
+
+CompFetcher = Callable[[str], list[Comp]]
+
+
+def make_baseline_resolver(
+    *, fetch: CompFetcher, fx: FxRates, fallback: BaselineResolver = bootstrap_baseline
+) -> BaselineResolver:
+    """A baseline resolver backed by live SerpApi comps, falling back to ``fallback`` (the bootstrap
+    table) when comps are thin or the fetch fails. Caches by query within one pass."""
+    cache: dict[str, Baseline | None] = {}
+
+    def resolve(spec: RamSpec) -> Baseline | None:
+        query = query_for(spec)
+        if query not in cache:
+            comps: list[Comp]
+            try:
+                comps = fetch(query)
+            except (SerpApiError, httpx.HTTPError):
+                comps = []  # a failed fetch degrades to the bootstrap table, never crashes the pass
+            cache[query] = live_baseline(comps, fx) or fallback(spec)
+        return cache[query]
+
+    return resolve
