@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 from pydantic import SecretStr
 
 from quartermaster.config import Settings, render_env_example
@@ -30,3 +31,13 @@ def test_secret_is_masked_and_never_leaks() -> None:
     # but the real value is still retrievable for use
     assert s.serpapi_api_key is not None
     assert s.serpapi_api_key.get_secret_value() == "super-secret-value"
+
+
+def test_blank_secret_env_becomes_none(monkeypatch: pytest.MonkeyPatch) -> None:
+    # an empty / whitespace env value means 'unset' -> None, so a missing key degrades to
+    # deterministic extraction instead of reaching an API as a blank credential (live-run bug).
+    monkeypatch.setenv("QM_ANTHROPIC_API_KEY", "")
+    monkeypatch.setenv("QM_SERPAPI_API_KEY", "   ")
+    s = Settings()
+    assert s.anthropic_api_key is None
+    assert s.serpapi_api_key is None

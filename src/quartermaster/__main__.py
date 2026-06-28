@@ -20,7 +20,7 @@ from . import health, mail
 from .config import Settings
 from .digest import render_digest
 from .fitment import G513QR
-from .fx import ecb_fx_rates
+from .fx import ecb_fx_rates, live_ecb_converter
 from .listings import ListingSource
 from .llm import anthropic_extractor
 from .logging import configure_logging, get_logger
@@ -76,7 +76,7 @@ def main(argv: list[str] | None = None) -> int:
     log = get_logger("quartermaster")
 
     raws = _read(settings, args.bodies)
-    fx = ecb_fx_rates()
+    fx = ecb_fx_rates(live_ecb_converter())  # download current ECB rates (falls back to bundled)
     today = dt.datetime.now(tz=dt.UTC).date()
 
     key = settings.anthropic_api_key
