@@ -35,6 +35,9 @@ docs = [
     "mkdocs-material>=9.7.6",
 ]
 
+[project.scripts]
+quartermaster = "quartermaster.__main__:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

@@ -3,6 +3,25 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-28 -- P1.4b: assemble() + CLI -- runnable end-to-end
+
+`pipeline.py` + `__main__.py` make the funnel runnable. `assemble(extracted, *, profile, fx,
+baseline_for, today) -> DigestItem | None` runs one ExtractedListing through fitment + landed cost +
+baseline -> surface (None when no price). `run_pass()` batches it. `null_extractor` is a
+deterministic-only LLM, so the funnel runs on the regex extractor alone when no Anthropic key exists.
+
+- **CLI** (`python -m quartermaster`, `[project.scripts]`): reads classifieds body `.txt` files, runs
+  the funnel, prints the digest. Runnable with NO live keys (deterministic extraction + bootstrap
+  baseline); uses Claude when `QM_ANTHROPIC_API_KEY` is set; structured logging (secret-redacted).
+- Phase-1 assembly defaults: classifieds = EU; EU + EUR -> costs-complete (price is the landed cost,
+  domestic pickup); else costs-incomplete -> ALERT. Injected: LLM, FxSnapshot, baseline resolver, today.
+- Demo verified: 3 fixtures -> the DDR5 kit dropped (incompatible with the DDR4 G513QR), 2 ALERT rows
+  ranked by deal%.
+- 8 tests (assemble paths, null_extractor, run_pass, CLI smoke x2 isolated from any local `.env`).
+  145 pass; ruff/mypy-strict/bandit clean.
+- REMAINING Phase-1: a SerpApi live-baseline resolver (swap bootstrap for live comps), P1.3c the
+  Gmail one-label reader (feeds RawListings), healthchecks ping, golden set.
+
 ## 2026-06-27 -- P1.4a: the ranked digest (the human-facing surface)
 
 `digest.py` -- Phase-1's only output. `DigestItem` (listing identity + `EvaluatedListing` +
