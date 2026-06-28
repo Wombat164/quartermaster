@@ -3,6 +3,22 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-28 -- Cleared the deferred audit items (Dependabot, v0.1.0, history rewrite)
+
+Operator-authorized the items the external audit had deferred:
+- **Merged the 5 Dependabot PRs** -- Actions to Node-24 majors (checkout v7, gitleaks v3, pages v5/v6),
+  still SHA-pinned; clears the Node-20 deprecation. (Caught + fixed a `uv.lock` drift the version bump
+  introduced.) CI green.
+- **Released v0.1.0** -- first tagged Phase-1 release: version 0.0.0 -> 0.1.0, `uv.lock` refresh,
+  annotated tag, GitHub Release. Adopters can pin `git+...@v0.1.0`.
+- **Rewrote history** -- scrubbed the author email `dev@vdhome.be` -> the GitHub noreply alias across all
+  30 affected commits (filter-branch, targeted so Dependabot[bot] attribution survived), force-pushed;
+  `git config` set so future commits use noreply. `origin/main` now has 0 occurrences. (The email was
+  already public pre-rewrite, so this removes it from the reachable tip, not from existing clones/caches.)
+- **Still NOT done** (need credentials / the Settings UI): publish to PyPI under an owned name; set the
+  social-preview image.
+- CI + docs green on the rewritten HEAD.
+
 ## 2026-06-28 -- External gap + security audit (public repo, from the outside)
 
 Two adversarial reviews from a fresh public clone + GitHub/PyPI/Pages recon. CORE security posture
