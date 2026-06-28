@@ -3,6 +3,31 @@
 Lightweight decision log. Plan-affecting or plan-extending choices go here so code and
 `docs/plan-final.md` never drift. Newest first.
 
+## 2026-06-28 -- OSS-adoptability: provider-agnostic email input (reverses Gmail-API-as-core)
+
+Red-team (2 agents: adoptability audit + prior-art research) found the Gmail-API input undermined the
+"easily adopted by others" goal: google libs in CORE deps (pulled requests/httplib2/protobuf for
+every adopter, incl. zero-key users), a 20-40 min GCP+OAuth onboarding, and the silent
+`gmail.readonly` RESTRICTED-scope trap (unverified personal app -> refresh token expires after ~7
+days). And Gmail was the ONLY live reader (provider lock-in). The `RawListing` boundary was already
+clean, so the fix was cheap. Reversed to the idiomatic fetch/parse split + extras pattern (notmuch /
+DVC):
+
+- **`mail.py` (core, stdlib-only):** `parse_email(raw) -> RawListing` (stdlib `email`, RFC822;
+  text/plain preferred, stripped-html fallback; subject->title; first link->url) + readers `read_path`
+  (.eml parsed, .txt = bare body), `read_mbox`, `read_stdin`, `read_imap` (stdlib `imaplib`, ANY
+  provider via app-password). No third-party deps.
+- **Default `QM_MAIL_SOURCE=file`** -- drop `.eml`/`.txt` in a dir (or pipe to stdin) -> digest, no
+  account, no keys, no extras. **IMAP** is the provider-agnostic live path.
+- **Gmail API demoted to the optional `[gmail]` extra**; google libs OUT of core; `gmail.py` slimmed
+  to share `mail.parse_email` (fetch `format=raw`); CLI errors friendly if the extra is missing. Its
+  caveats (7-day token, whole-mailbox scope) are documented in the file. (Supersedes the P1.3c entry.)
+- stdin also answers the "use a provider's Gmail MCP" idea for free: an agent fetches + pipes the
+  `.eml`; Quartermaster owns no provider code in that path.
+- config: `mail_source` + `mail_path` + `imap_*` (password = SecretStr) + `gmail_*` paths;
+  `.env.example` regenerated (Path defaults via `as_posix`, can't drift cross-OS). Verified:
+  `printf ... | QM_MAIL_SOURCE=stdin python -m quartermaster` renders a digest. 155 pass; clean.
+
 ## 2026-06-28 -- P1.3c: Gmail one-label reader (read-only OAuth)
 
 Operator chose the **Gmail API (read-only OAuth)** over IMAP. `gmail.py`, same two-layer shape as the
